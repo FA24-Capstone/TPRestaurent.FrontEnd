@@ -6,7 +6,7 @@ import {
   Input,
   Typography,
 } from "@material-tailwind/react";
-import { Table } from "antd";
+import { Skeleton, Table } from "antd";
 import { ArrowPathIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { FaLock } from "react-icons/fa";
@@ -93,6 +93,9 @@ export function AdminDevicePage() {
       ),
     },
   ];
+  if (loading) {
+    return <Skeleton />;
+  }
   return (
     <Card className="h-full w-full">
       {/* <LoadingOverlay /> */}

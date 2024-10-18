@@ -105,10 +105,10 @@ export function MultiLevelSidebar({ menuItems }) {
   }, [location, dispatch]);
 
   return (
-    <div className="flex min-h-full bg-gray-100">
+    <div className="flex min-h-full bg-gray-100 ">
       <div
         ref={sidebarRef}
-        className={`fixed min-h-full inset-y-0 left-0 z-50 w-64 bg-[#970C1A] text-white transition-transform duration-300 ease-in-out ${
+        className={`fixed min-h-full inset-y-0 left-0 z-50 w-64 bg-[#970C1A] rounded-tr-2xl rounded-br-2xl text-white transition-transform duration-300 ease-in-out ${
           sidebar.isOpen ? "translate-x-0" : "-translate-x-full"
         } md:relative md:translate-x-0`}
       >

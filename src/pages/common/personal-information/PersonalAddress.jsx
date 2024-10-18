@@ -28,7 +28,7 @@ const PersonalAddress = () => {
   const [options, setOptions] = useState([]);
   const { callApi, error } = useCallApi();
   const [form] = Form.useForm();
-  const [location, setLocation] = useState({ lat: "", lng: "" });
+  const [location, setLocation] = useState(null);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);

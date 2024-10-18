@@ -68,7 +68,9 @@ const ManagerLayout = () => {
     <div className="flex">
       <MultiLevelSidebar menuItems={menuItems} />
       <div className=" flex-1 w-full min-h-dvh bg-blue-gray-50">
-        <HeaderManager userName={user.lastName} />
+        <div className="mx-2">
+          <HeaderManager userName={user.lastName} />
+        </div>
         <div className="m-2 mt-8">
           <Outlet />
         </div>

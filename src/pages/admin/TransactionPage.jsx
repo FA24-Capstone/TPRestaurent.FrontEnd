@@ -14,11 +14,12 @@ import useCallApi from "../../api/useCallApi";
 import LoadingOverlay from "../../components/loading/LoadingOverlay";
 import TabMananger from "../../components/tab/TabManager";
 import Pagination from "../../components/pagination/Pagination";
+import { Skeleton } from "antd";
 
 const TABS = [
   {
     label: "Tất cả",
-    value: "",
+    value: "all",
   },
   {
     label: "Đang xử lý",
@@ -61,7 +62,9 @@ export function TransactionPage() {
   useEffect(() => {
     fetchData();
   }, [currentPage, activeTab]);
-
+  if (loading) {
+    return <Skeleton />;
+  }
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">

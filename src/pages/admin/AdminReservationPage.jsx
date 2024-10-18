@@ -24,7 +24,7 @@ import ModalReservationDetail from "../../components/reservation/modal/ModalRese
 const TABS = [
   {
     label: "Tất cả",
-    value: "",
+    value: "0",
   },
   {
     label: "Chờ xác nhận",

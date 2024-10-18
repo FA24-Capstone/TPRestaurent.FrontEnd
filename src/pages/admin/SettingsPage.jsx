@@ -9,6 +9,7 @@ import {
   Button,
   DatePicker,
   TimePicker,
+  Skeleton,
 } from "antd";
 import moment from "moment";
 import useCallApi from "../../api/useCallApi";
@@ -71,7 +72,9 @@ const SettingsPage = () => {
       ),
     },
   ];
-
+  if (loading) {
+    return <Skeleton />;
+  }
   return (
     <Card
       className="max-w-4xl mx-auto my-8"
