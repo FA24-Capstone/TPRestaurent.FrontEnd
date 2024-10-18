@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { render } from "react-dom";
 import useCallApi from "../../../api/useCallApi";
 import { debounce, set } from "lodash";
-import { IconButton } from "@material-tailwind/react";
+import { IconButton, Typography } from "@material-tailwind/react";
 import { Edit2, Trash2 } from "lucide-react";
 import { AccountApi, MapApi } from "../../../api/endpoint";
 import { login } from "../../../redux/features/authSlice";

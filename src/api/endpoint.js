@@ -112,3 +112,7 @@ export const TokenApi = {
   DELETE_TOKEN: "/token/delete-token",
   GET_USER_TOKEN_BY_IP: "/token/get-user-token-by-ip",
 };
+
+export const NotificationApi={
+GET_ALL_NOTIFICATION_BY_USER:"/notification/get-all-notification-by-account-id",
+}

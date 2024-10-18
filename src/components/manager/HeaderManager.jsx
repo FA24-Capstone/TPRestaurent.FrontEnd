@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Navbar,
   Typography,
@@ -19,17 +19,27 @@ import {
 import { FaBars, FaTimes } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { close, open } from "../../redux/features/sidebarSlice";
+import useCallApi from "../../api/useCallApi";
+import { NotificationApi } from "../../api/endpoint";
 
 const HeaderManager = ({ userName = "Admin" }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [notifications, setNotifications] = useState([
-    { id: 1, text: "New message from John", read: false },
-    { id: 2, text: "You have a new friend request", read: false },
-    { id: 3, text: "Your post was liked by Sarah", read: false },
-    { id: 4, text: "Event reminder: Team meeting at 3 PM", read: false },
-  ]);
+  const {callApi,error,loading} = useCallApi();
+  const [notifications, setNotifications] = useState([  ]);
+const user=useSelector((state)=>state.user.user || {});
+const fetchNotifications = async () => {
+  const response = await callApi(`${NotificationApi.GET_ALL_NOTIFICATION_BY_USER}/${user.id}`, "GET");
+  if (response.isSuccess) {
+    setNotifications(response.result?.items);
+  } else {
+    showError(error);
+  }
+};
 
+useEffect(() => {
+  fetchNotifications();
+}, []);
   const closeMenu = () => setIsMenuOpen(false);
   const dispatch = useDispatch();
   const siderbar = useSelector((state) => state.sidebar);
@@ -87,32 +97,43 @@ const HeaderManager = ({ userName = "Admin" }) => {
                 <IconButton
                   variant="text"
                   color="white"
-                  className="rounded-full hover:bg-white/20 transition-all duration-300"
+                  className="rounded-full border border-gray-200 shadow-md  hover:bg-white/20 transition-all duration-300"
                   onClick={() => setIsNotificationOpen(!isNotificationOpen)}
                 >
-                  <BellIcon className="h-5 w-5" />
+                  <BellIcon className="h-5 w-5 text-red-800" />
                 </IconButton>
               </Badge>
             </MenuHandler>
-            <MenuList className="p-2 mt-2 bg-white rounded-lg shadow-xl border border-gray-200">
+            <MenuList className="p-2 mt-8 shadow-2xl border border-gray-500 bg-white rounded-lg ">
+              <Typography variant="h3" className="text-red-800 ">Thông báo</Typography>
+              <hr />
+              <div className="w-80 h-[400px] overflow-auto ">
               {notifications.map((notification) => (
                 <MenuItem
                   key={notification.id}
-                  onClick={() => markAsRead(notification.id)}
-                  className={`flex items-center gap-2 p-2 rounded-md transition-all duration-300 ${
-                    notification.read
+                  // onClick={() => markAsRead(notification.id)}
+                  className={`flex flex-col  gap-2 p-2 rounded-md transition-all duration-300 ${
+                    notification?.read
                       ? "opacity-50 bg-gray-100"
                       : "hover:bg-blue-50"
                   }`}
                 >
                   <Typography
+                    variant="lead"
+                    className="font-bold text-lg text-gray-700"
+                  >
+                    {notification.notificationName}
+                  </Typography> 
+                  <Typography
                     variant="small"
                     className="font-normal text-gray-700"
                   >
-                    {notification.text}
+                    {notification.messages}
                   </Typography>
                 </MenuItem>
               ))}
+              </div>
+        
               <MenuItem
                 onClick={markAllAsRead}
                 className="flex items-center gap-2 justify-center mt-2 p-2 rounded-md hover:bg-blue-50 transition-all duration-300"
@@ -121,7 +142,7 @@ const HeaderManager = ({ userName = "Admin" }) => {
                   variant="small"
                   className="font-medium text-blue-500 hover:text-blue-700"
                 >
-                  Mark all as read
+                Đánh dấu đọc tất cả
                 </Typography>
               </MenuItem>
             </MenuList>
