@@ -140,7 +140,7 @@ const CartSummary = ({ handleClose }) => {
     const updatedData = {
       customerId: user.id,
       orderType: 2,
-      note: "string",
+      note: note || "Không có ghi chú",
       orderDetailsDtos: reservationDishDtos,
 
       deliveryOrder: {
