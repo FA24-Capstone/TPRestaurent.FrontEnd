@@ -43,14 +43,14 @@ const ChatButton = () => {
   return (
     <div className="fixed z-50 bottom-[0.5rem] right-[0.5rem]">
       {isOpen ? (
-        <div className="bg-white rounded-lg shadow-lg w-80 h-96 flex flex-col">
+        <div className="bg-white  rounded-lg shadow-lg w-80 h-96 flex flex-col">
           <div
             onClick={toggleChat}
             className="bg-red-900 flex justify-start items-center text-white rounded-tr-lg rounded-tl-lg px-4 py-2 cursor-pointer"
           >
             <img src={AI} alt="" className="h-12 w-12" />
-            <span>MR.CHEF AI</span>
-            <span className="bg-[#4F970F] h-3 w-3 rounded-full inline-block ml-2"></span>{" "}
+            <span className="">MR.CHEF AI</span>
+            <span className="bg-[#4F970F] animate-pulse  h-3 w-3 rounded-full inline-block ml-2"></span>{" "}
           </div>
           <div className="flex-grow p-4 overflow-y-auto bg-[#FFF9EF]">
             {messages.map((message) => (
@@ -90,11 +90,11 @@ const ChatButton = () => {
       ) : (
         <div
           onClick={toggleChat}
-          className="bg-red-900 flex justify-between items-center text-white rounded-tr-lg rounded-tl-lg px-4 py-2 cursor-pointer"
+          className="bg-red-900 animate-bounce flex justify-between items-center text-white rounded-tr-lg rounded-tl-lg px-4 py-2 cursor-pointer"
         >
           <img src={AI} alt="" className="h-12 w-12" />
-          <span>MR.CHEF AI</span>
-          <span className="bg-[#4F970F] h-3 w-3 rounded-full inline-block ml-2"></span>{" "}
+          <span className="animate-pulse ">MR.CHEF AI</span>
+          <span className="bg-[#4F970F] animate-pulse  h-3 w-3 rounded-full inline-block ml-2"></span>{" "}
         </div>
       )}
     </div>

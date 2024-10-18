@@ -1,5 +1,5 @@
 import { formatDate } from "../../util/Utility";
-
+import avt from "../../assets/imgs/avt.jpg";
 const UserInfo = ({ userData, handleOpenUpdate }) => {
   const currentAddress = userData?.addresses?.filter(
     (address) => address.isCurrentUsed
@@ -8,7 +8,13 @@ const UserInfo = ({ userData, handleOpenUpdate }) => {
   return (
     <div className="bg-[#fff6e7] rounded-lg shadow-md p-4 max-w-7xl mx-auto my-10">
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
-        <div className="md:col-span-1"></div>
+        <div className="md:col-span-1 ">
+          <img
+            src={userData.avatar || avt}
+            alt=""
+            className="rounded-full object-contain w-32 h-32"
+          />
+        </div>
         <div className="ml-10 md:col-span-5 space-y-2">
           <h3 className="text-2xl font-bold text-gray-800 uppercase">
             {`${userData?.firstName} ${userData.lastName}` || "N/A"}

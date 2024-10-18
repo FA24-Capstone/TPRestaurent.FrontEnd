@@ -46,7 +46,7 @@ export const HomePage = () => {
   };
 
   const checkInfo = async () => {
-    if (!isEmptyObject(user) && !user.isManuallyCreated) {
+    if (!isEmptyObject(user) && user.isManuallyCreated) {
       message.warning(
         "Vui lòng cập nhật thông tin cá nhân. Chúng tôi sẽ chuyển bạn đến trang cập nhật trong 3 giây tới"
       );

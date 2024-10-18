@@ -7,6 +7,7 @@ import UserSidebar from "../../components/user/UserSidebar";
 import { useSelector } from "react-redux";
 import InfoModal from "../../components/user/InfoModal";
 import ChatButton from "../../components/chat/ChatButton";
+import { ArrowDownCircle, ArrowDownIcon } from "lucide-react";
 
 const UserLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -23,13 +24,14 @@ const UserLayout = () => {
           handleOpenUpdate={() => setIsUpdateModalOpen(true)}
         />
         <div className="">
-          <button
-            className="xl:hidden bg-red-700 text-white px-4 py-2 rounded-md mb-4"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            {sidebarOpen ? "Menu" : " Menu"}
-          </button>
-
+          <div className="flex justify-end">
+            <button
+              className="xl:hidden bg-red-900 text-white px-4 py-2 rounded-md flex mb-4"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              <span className="mr-2">Menu</span> <ArrowDownIcon size={24} />
+            </button>
+          </div>
           <div className="xl:flex justify-center">
             <div className={` ${sidebarOpen ? "block" : "hidden"} xl:block`}>
               <UserSidebar />

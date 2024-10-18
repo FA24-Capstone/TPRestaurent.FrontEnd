@@ -40,6 +40,9 @@ import NavigateCreateMenu from "../pages/admin/menu/NavigateCreateMenu";
 import CreateMenuPage from "../pages/admin/menu/CreateMenuPage";
 import CreateComboPage from "../pages/admin/menu/CreateComboPage";
 import DailySellManagement from "../pages/admin/daily-sell/DailySellManagement";
+import UpdateProfile from "../pages/common/personal-information/UpdateProfile";
+import PersonalAddress from "../pages/common/personal-information/PersonalAddress";
+import PersonalSetting from "../pages/common/personal-information/PersonalSetting";
 
 function Routers() {
   const routing = useRoutes([
@@ -136,6 +139,18 @@ function Routers() {
         {
           path: "transaction-history",
           element: <PersonalTransaction />,
+        },
+        {
+          path: "personal",
+          element: <UpdateProfile />,
+        },
+        {
+          path: "address",
+          element: <PersonalAddress />,
+        },
+        {
+          path: "settings",
+          element: <PersonalSetting />,
         },
       ],
     },
