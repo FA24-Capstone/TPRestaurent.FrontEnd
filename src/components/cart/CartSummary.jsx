@@ -345,14 +345,7 @@ const CartSummary = ({ handleClose }) => {
         isDisabled={true}
       />
       <PolicyOrder />
-      <Checkbox
-        onChange={() => {
-          setIsAgree(!isAgree);
-        }}
-        className="font-bold text-lg my-2"
-      >
-        Tôi đồng ý các điều khoản và chính sách mua hàng tại nhà hàng Thiên Phú
-      </Checkbox>
+
       <div>
         <div className="flex justify-between items-center  bg-gray-100 shadow-md py-6 px-4">
           <span className="text-lg text-black">Tạm tính:</span>
@@ -395,7 +388,14 @@ const CartSummary = ({ handleClose }) => {
 
         <></>
       </div>
-
+      <Checkbox
+        onChange={() => {
+          setIsAgree(!isAgree);
+        }}
+        className="font-bold text-lg my-2"
+      >
+        Tôi đồng ý các điều khoản và chính sách mua hàng tại nhà hàng Thiên Phú
+      </Checkbox>
       <div className="flex justify-center">
         {isAgree && (
           <>

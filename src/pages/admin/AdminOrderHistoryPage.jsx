@@ -201,11 +201,6 @@ export function AdminOrderHistoryPage() {
           onPageChange={handleCurrentPageChange}
         />
       </Card>
-      {/* <OrderDetailModal
-        order={orderSelected}
-        handleOpen={handleOpen}
-        open={open}
-      /> */}
       <ModalReservationDetail
         visible={open}
         onClose={() => setOpen(!open)}

@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Mail, Phone, DollarSign, CreditCard } from "lucide-react";
 import PaymentMethodSelector from "../cart/PaymentMethodSelector";
 import { Typography } from "@material-tailwind/react";
-import { numberToWords, showError } from "../../util/Utility";
+import { formatPrice, numberToWords, showError } from "../../util/Utility";
 import useCallApi from "../../api/useCallApi";
 import { TransactionApi } from "../../api/endpoint";
 
@@ -71,7 +71,7 @@ const CreateStoreCreditModal = ({ isOpen, onClose }) => {
             </div>
             <div>
               <Typography className="text-sm font-bold">
-                {user.storeCredit || 0} VNĐ
+                {formatPrice(user.storeCredit) || formatPrice(0)}
               </Typography>
             </div>
           </div>
@@ -93,7 +93,7 @@ const CreateStoreCreditModal = ({ isOpen, onClose }) => {
           </Typography>
         )}
         <Button
-          className="text-white bg-red-900"
+          className="text-white bg-red-900 my-2"
           onClick={handleSubmit}
           loading={loading}
         >

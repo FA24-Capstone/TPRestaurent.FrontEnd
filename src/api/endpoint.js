@@ -110,4 +110,5 @@ export const TokenApi = {
   GET_ALL_TOKEN_BY_USER: "/token/get-all-token-by-user",
   LOG_OUT_ALL_DEVICE: "/token/log-out-all-device",
   DELETE_TOKEN: "/token/delete-token",
+  GET_USER_TOKEN_BY_IP: "/token/get-user-token-by-ip",
 };

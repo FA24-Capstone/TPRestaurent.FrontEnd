@@ -26,8 +26,6 @@
     "formik": "^2.4.6",
     "fortawesome": "^0.0.1-security",
     "framer-motion": "^11.3.21",
-    "headlessui": "^0.0.0",
-    "i": "^0.3.7",
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.320.0",

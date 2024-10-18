@@ -13,7 +13,6 @@ const TopVoucher = () => {
     slidesToScroll: 2,
     autoplay: true,
     autoplaySpeed: 3000, // Auto-scroll every 3 seconds
-    pauseOnHover: true, // Pause auto-scroll on hover
   };
   const [coupons, setCoupons] = useState([]);
   const { callApi, error, loading } = useCallApi();
@@ -27,12 +26,12 @@ const TopVoucher = () => {
     fetchData();
   }, []);
   return (
-    <>
+    <div className="w-full px-4">
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold my-5">Khuyến mãi hot</h1>
         <h3 className="text-lg font-bold my-5 text-mainColor">Xem thêm</h3>
       </div>
-      <div className="">
+      <div className="overflow-hidden">
         <Slider {...settings}>
           {coupons.length > 0 &&
             coupons.map((coupon, index) => (
@@ -40,13 +39,7 @@ const TopVoucher = () => {
             ))}
         </Slider>
       </div>
-      {/* <div className="md:hidden grid grid-cols-1  gap-4">
-        {coupons.length > 0 &&
-          coupons.map((coupon, index) => (
-            <TopVoucherDetail key={index} coupon={coupon} />
-          ))}
-      </div> */}
-    </>
+    </div>
   );
 };
 export default TopVoucher;

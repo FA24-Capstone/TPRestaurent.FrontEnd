@@ -24,18 +24,24 @@ const PersonalSetting = () => {
   const user = useSelector((state) => state.user.user || {});
   const dispatch = useDispatch();
   const fetchDevices = async () => {
+    const tokenUser = await callApi(`${TokenApi.GET_USER_TOKEN_BY_IP}`, "POST");
+    if (tokenUser.isSuccess) {
+      console.log(tokenUser);
+      if (tokenUser.result) {
+        setNotificationsEnabled(true);
+      }
+    }
     const response = await callApi(
       `${TokenApi.GET_ALL_TOKEN_BY_USER}/${user.id}/1/100`,
       "GET"
     );
     if (response.isSuccess) {
       setDevices(response.result?.items);
-      
     } else {
       showError(error);
     }
   };
-  console.log(devices)
+  console.log(devices);
 
   useEffect(() => {
     fetchDevices();
@@ -63,11 +69,17 @@ const PersonalSetting = () => {
     }
   };
 
-  const handleLogoutDevice =  async(tokenId) => {
-    const response= await callApi(`${TokenApi.DELETE_TOKEN}?tokenId=${tokenId}`, "DELETE");
+  const handleLogoutDevice = async (tokenId) => {
+    const response = await callApi(
+      `${TokenApi.DELETE_TOKEN}?tokenId=${tokenId}`,
+      "DELETE"
+    );
     if (response.isSuccess) {
-     const data= devices.filter((device) => device.accessToken === device.some((device) => device.accessToken));
-     console.log(data)
+      const data = devices.filter(
+        (device) =>
+          device.accessToken === device.some((device) => device.accessToken)
+      );
+      console.log(data);
       // fetchDevices();
     } else {
       showError(error);
@@ -79,7 +91,10 @@ const PersonalSetting = () => {
       title: "Đăng xuất tất cả thiết bị",
       content: "Bạn có chắc chắn muốn đăng xuất khỏi tất cả thiết bị?",
       onOk: async () => {
-       const response = await callApi(`${TokenApi.LOG_OUT_ALL_DEVICE}?accountId=${user.id}`, "POST");
+        const response = await callApi(
+          `${TokenApi.LOG_OUT_ALL_DEVICE}?accountId=${user.id}`,
+          "POST"
+        );
         if (response.isSuccess) {
           fetchDevices();
           dispatch(logout());
@@ -94,11 +109,11 @@ const PersonalSetting = () => {
     switch (type) {
       case "iPhone":
         return <Smartphone size={20} />;
-        case "android":
+      case "android":
         return <Smartphone size={20} />;
       case "Windows PC":
         return <Laptop size={20} />;
-        case "Mac":
+      case "Mac":
         return <Laptop size={20} />;
       case "tablet":
         return <Tablet size={20} />;
@@ -130,23 +145,21 @@ const PersonalSetting = () => {
                 key="logout"
                 type="link"
                 danger
-              onClick={() => handleLogoutDevice(device.tokenId)}
+                onClick={() => handleLogoutDevice(device.tokenId)}
                 icon={<LogOut size={16} />}
               >
                 Đăng xuất
               </Button>,
             ]}
           >
-            
             <List.Item.Meta
               avatar={getDeviceIcon(device.deviceName)}
               title={device.deviceName}
-             description={`Đăng nhập lần cuối: ${formatDateTime(device.lastLogin)}`}
+              description={`Đăng nhập lần cuối: ${formatDateTime(
+                device.lastLogin
+              )}`}
             />
-               <List.Item.Meta
-             description={` Địa chỉ IP: ${device.deviceIP}`}
-            />
-
+            <List.Item.Meta description={` Địa chỉ IP: ${device.deviceIP}`} />
           </List.Item>
         )}
       />

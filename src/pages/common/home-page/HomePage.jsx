@@ -8,6 +8,7 @@ import TopVoucher from "../../../components/top-voucher/TopVoucher";
 import LoadingOverlay from "../../../components/loading/LoadingOverlay";
 import useCallApi from "../../../api/useCallApi";
 import { DishApi } from "../../../api/endpoint";
+import { Skeleton } from "antd";
 
 export const HomePage = () => {
   const [dishes, setDishes] = useState([]);
@@ -64,34 +65,31 @@ export const HomePage = () => {
     { name: "SAUCE", icon: "fa-martini-glass" },
   ];
 
+  if (loading) {
+    return <Skeleton active key={loading} />;
+  }
   return (
     <>
-      <LoadingOverlay isLoading={loading} />
+      <>
+        <div className="contain-content">
+          <SliderHome />
+        </div>
 
-      {!loading && (
-        <>
-          <div className="contain-content">
-            <SliderHome />
-          </div>
-
-          <div className="xl:container">
-            <TopVoucher />
-            <IntroHome />
-            <BestSeller />
-            <MenuDish
-              dishes={dishes}
-              handleAddItem={handleAddItem}
-              fetchDishes={fetchData}
-              setSelectedCategory={setSelectedCategory}
-              selectedCategory={selectedCategory}
-              menuCategories={menuCategories}
-            />
-            <TopFeedback />
-
-            {/* <Reservation /> */}
-          </div>
-        </>
-      )}
+        <div className="">
+          <TopVoucher />
+          <IntroHome />
+          <BestSeller />
+          <MenuDish
+            dishes={dishes}
+            handleAddItem={handleAddItem}
+            fetchDishes={fetchData}
+            setSelectedCategory={setSelectedCategory}
+            selectedCategory={selectedCategory}
+            menuCategories={menuCategories}
+          />
+          <TopFeedback />
+        </div>
+      </>
     </>
   );
 };

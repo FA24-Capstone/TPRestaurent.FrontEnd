@@ -3,15 +3,11 @@ import { Provider } from "react-redux";
 import { persistor, store } from "./redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { StateProvider } from "./context/StateProvider";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "aos/dist/aos.css";
 import "react-toastify/dist/ReactToastify.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import AOS from "aos";
-AOS.init({
-  duration: 1000,
-});
 import { registerables } from "chart.js";
 import Chart from "chart.js/auto";
 Chart.register(...registerables);
@@ -19,11 +15,10 @@ import moment from "moment-timezone";
 import Routers from "./routes/Routers";
 import { getToken, onMessage } from "firebase/messaging";
 import { messaging } from "./firebase/firebase";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { message } from "antd";
 import { NotificationProvider } from "./context/NotificationContext";
 import { useNotification } from "./hook/useNotification";
-import { data } from "autoprefixer";
 moment.tz.setDefault("Asia/Ho_Chi_Minh");
 
 export async function requestPermission() {

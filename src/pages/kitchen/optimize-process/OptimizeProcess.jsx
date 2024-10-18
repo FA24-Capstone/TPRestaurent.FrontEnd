@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Typography, Table, message, Image, Tag, Badge } from "antd";
+import { Typography, Table, message, Image, Tag, Badge, Skeleton } from "antd";
 import useCallApi from "../../../api/useCallApi";
 import { OrderApi, OrderSessionApi } from "../../../api/endpoint";
 import { IconButton } from "@material-tailwind/react";
@@ -156,7 +156,9 @@ const OptimizeProcess = () => {
       }
     };
   }, [connection]);
-
+  if (loading) {
+    return <Skeleton active />;
+  }
   return (
     <div className="px-10 bg-white rounded-lg py-4 shadow-lg">
       <h5 className="text-center text-red-800 font-bold text-2xl">
