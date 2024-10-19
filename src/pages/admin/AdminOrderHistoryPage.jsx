@@ -11,12 +11,12 @@ import {
   Tooltip,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { Table } from "antd";
-import { formatDateTime } from "../../util/Utility";
+import { message, Table, Checkbox, Select } from "antd";
+import { formatDateTime, showError } from "../../util/Utility";
 import useCallApi from "../../api/useCallApi";
 import Pagination from "../../components/pagination/Pagination";
 import TabMananger from "../../components/tab/TabManager";
-import { OrderApi } from "../../api/endpoint";
+import { AccountApi, OrderApi } from "../../api/endpoint";
 import OrderTag from "../../components/tag/OrderTag";
 import ModalReservationDetail from "../../components/reservation/modal/ModalReservationDetail";
 
@@ -53,15 +53,60 @@ export function AdminOrderHistoryPage() {
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
-  const { callApi, error, loading } = useCallApi();
+  const { callApi, loading, error } = useCallApi();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const totalItems = 10;
   const [orderSelected, setOrderSelected] = useState({});
+  const [shipperAvailable, setShipperAvailable] = useState([]);
+  const [selectedShipper, setSelectedShipper] = useState(null);
+  const [selectedOrders, setSelectedOrders] = useState([]);
 
   const handleCurrentPageChange = (page) => {
     setCurrentPage(page);
   };
+
+  const fetchShipperAvailable = async () => {
+    const response = await callApi(
+      `${AccountApi.LOAD_AVAILABLE_SHIPPER}`,
+      "GET"
+    );
+    if (response?.isSuccess) {
+      setShipperAvailable(response?.result?.items);
+    } else {
+      showError(error);
+    }
+  };
+
+  const handleSubmitShipper = async () => {
+    if (!selectedShipper) {
+      message.error("Vui lòng chọn shipper");
+      return;
+    }
+    if (selectedOrders.length === 0) {
+      message.error("Vui lòng chọn ít nhất một đơn hàng");
+      return;
+    }
+    const response = await callApi(
+      `${OrderApi.ASSIGN_ORDER_TO_SHIPPER}?shipperId=${selectedShipper}`,
+      "POST",
+      selectedOrders
+    );
+    if (response?.isSuccess) {
+      message.success("Đã cập nhật shipper thành công");
+      await fetchOrder();
+      setSelectedOrders([]);
+    } else {
+      showError(error);
+    }
+  };
+
+  const handleOrderSelection = (orderId, checked) => {
+    setSelectedOrders((prev) =>
+      checked ? [...prev, orderId] : prev.filter((id) => id !== orderId)
+    );
+  };
+
   const columns = [
     {
       title: "Mã đơn hàng",
@@ -117,7 +162,20 @@ export function AdminOrderHistoryPage() {
       ),
     },
   ];
-
+  if (activeTab === "6") {
+    columns.unshift({
+      title: "Chọn",
+      key: "select",
+      render: (_, record) => (
+        <Checkbox
+          checked={selectedOrders.includes(record.orderId)}
+          onChange={(e) =>
+            handleOrderSelection(record.orderId, e.target.checked)
+          }
+        />
+      ),
+    });
+  }
   const fetchOrder = async () => {
     const response = await callApi(
       `order/get-all-order-by-status/${currentPage}/${totalItems}?status=${activeTab}&orderType=${2}`,
@@ -131,17 +189,30 @@ export function AdminOrderHistoryPage() {
 
   useEffect(() => {
     fetchOrder();
+    if (activeTab === "6") {
+      fetchShipperAvailable();
+    }
   }, [activeTab, currentPage]);
 
   const fetchOrderDetail = async (orderId) => {
-    debugger;
     const response = await callApi(`${OrderApi.GET_DETAIL}/${orderId}`, "GET");
     if (response?.isSuccess) {
       setOrderSelected(response?.result);
       handleOpen();
     }
   };
-
+  if (["7", "8", "9"].includes(activeTab)) {
+    columns.splice(columns.length - 1, 0, {
+      title: "Shipper",
+      dataIndex: "shipper",
+      key: "shipper",
+      render: (_, record) => (
+        <Typography>
+          {record.shipper?.firstName} {record.shipper?.lastName}
+        </Typography>
+      ),
+    });
+  }
   return (
     <>
       <Card className="h-full w-full">
@@ -186,14 +257,46 @@ export function AdminOrderHistoryPage() {
             </div>
           </div>
         </CardHeader>
-        <CardBody className="overflow-auto h-[550px]">
-          <Table
-            columns={columns}
-            dataSource={data}
-            pagination={false}
-            rowKey="orderId"
-            loading={loading}
-          />
+        <CardBody
+          className={activeTab ? "flex" : `block overflow-auto h-[550px]`}
+        >
+          {activeTab === "6" && (
+            <div className="flex flex-col mb-4">
+              <Typography
+                variant="h6"
+                color="blue-gray"
+                className="uppercase text-red-800 text-xl my-4"
+              >
+                Chọn shipper để giao hàng
+              </Typography>
+              <Select
+                value={selectedShipper}
+                onChange={(value) => setSelectedShipper(value)}
+                className="mb-4"
+              >
+                {shipperAvailable.map((shipper) => (
+                  <Option key={shipper.id} value={shipper.id}>
+                    {shipper.firstName} {shipper.lastName}
+                  </Option>
+                ))}
+              </Select>
+              <Button
+                className="bg-red-700 text-white"
+                onClick={handleSubmitShipper}
+              >
+                Xác nhận shipper
+              </Button>
+            </div>
+          )}
+          <div className="flex-1">
+            <Table
+              columns={columns}
+              dataSource={data}
+              pagination={false}
+              rowKey="orderId"
+              loading={loading}
+            />
+          </div>
         </CardBody>
         <Pagination
           currentPage={currentPage}

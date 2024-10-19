@@ -56,11 +56,6 @@ const menuItems = [
       { title: "Quản lý thiết bị", path: "/admin/manage-devices" },
     ],
   },
-  {
-    title: "Đăng xuất",
-    icon: <FaSignOutAlt className="h-5 w-5 text-white" />,
-    path: "/logout",
-  },
 ];
 const ManagerLayout = () => {
   const user = useSelector((state) => state.user.user || {});

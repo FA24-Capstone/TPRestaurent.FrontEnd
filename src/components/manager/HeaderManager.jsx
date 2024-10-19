@@ -24,63 +24,66 @@ import { NotificationApi } from "../../api/endpoint";
 import * as signalR from "@microsoft/signalr";
 import { baseUrl } from "../../api/config/axios";
 import { message } from "antd";
-
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../redux/features/authSlice";
 const HeaderManager = ({ userName = "Admin" }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const {callApi,error,loading} = useCallApi();
+  const { callApi, error, loading } = useCallApi();
   const [notifications, setNotifications] = useState([]);
   const [connection, setConnection] = useState(null);
-
-const user=useSelector((state)=>state.user.user || {});
-const fetchNotifications = async () => {
-  const response = await callApi(`${NotificationApi.GET_ALL_NOTIFICATION_BY_USER}/${user.id}`, "GET");
-  if (response.isSuccess) {
-    setNotifications(response.result?.items);
-  } else {
-    showError(error);
-  }
-};
-useEffect(() => {
-  // Create connection
-  const newConnection = new signalR.HubConnectionBuilder()
-    .withUrl(`${baseUrl}/notifications`) // Replace with your SignalR hub URL
-    .withAutomaticReconnect()
-    .build();
-
-  setConnection(newConnection);
-}, []);
-useEffect(() => {
-  if (connection) {
-    // Start the connection
-    connection
-      .start()
-      .then(() => {
-        console.log("Connected to SignalR");
-        message.success("Connected to SignalR");
-        connection.on("LOAD_ORDER", (data) => {
-          fetchNotifications();
-        });
-      })
-      .catch((error) => console.log("Connection failed: ", error));
-  }
-
-  // Cleanup on component unmount
-  return () => {
-    if (connection) {
-      connection.stop();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user.user || {});
+  const fetchNotifications = async () => {
+    const response = await callApi(
+      `${NotificationApi.GET_ALL_NOTIFICATION_BY_USER}/${user.id}`,
+      "GET"
+    );
+    if (response.isSuccess) {
+      setNotifications(response.result?.items);
+    } else {
+      showError(error);
     }
   };
-}, [connection]);
-useEffect(() => {
-  fetchNotifications();
-}, []);
+  useEffect(() => {
+    // Create connection
+    const newConnection = new signalR.HubConnectionBuilder()
+      .withUrl(`${baseUrl}/notifications`) // Replace with your SignalR hub URL
+      .withAutomaticReconnect()
+      .build();
+
+    setConnection(newConnection);
+  }, []);
+  useEffect(() => {
+    if (connection) {
+      // Start the connection
+      connection
+        .start()
+        .then(() => {
+          console.log("Connected to SignalR");
+          message.success("Connected to SignalR");
+          connection.on("LOAD_ORDER", (data) => {
+            fetchNotifications();
+          });
+        })
+        .catch((error) => console.log("Connection failed: ", error));
+    }
+
+    // Cleanup on component unmount
+    return () => {
+      if (connection) {
+        connection.stop();
+      }
+    };
+  }, [connection]);
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
   const closeMenu = () => setIsMenuOpen(false);
   const dispatch = useDispatch();
   const siderbar = useSelector((state) => state.sidebar);
 
   const unreadCount = notifications?.length;
-
 
   return (
     <div className="mx-auto min-w-full text-black bg-white  rounded-lg mt-2 px-4 py-2 shadow-lg">
@@ -131,42 +134,40 @@ useEffect(() => {
               </Badge>
             </MenuHandler>
             <MenuList className="p-2 mt-8 shadow-2xl border border-gray-500 bg-white rounded-lg ">
-              <Typography variant="h3" className="text-red-800 ">Thông báo</Typography>
+              <Typography variant="h3" className="text-red-800 ">
+                Thông báo
+              </Typography>
               <hr />
               <div className="w-80 h-[400px] overflow-auto ">
-              {notifications.map((notification) => (
-                <MenuItem
-                  key={notification.id}
-                  // onClick={() => markAsRead(notification.id)}
-                  className={`flex flex-col  gap-2 p-2 rounded-md transition-all duration-300 ${
-                    notification?.read
-                      ? "opacity-50 bg-gray-100"
-                      : "hover:bg-blue-50"
-                  }`}
-                >
-                  <Typography
-                    variant="lead"
-                    className="font-bold text-lg text-gray-700"
+                {notifications.map((notification) => (
+                  <MenuItem
+                    key={notification.id}
+                    // onClick={() => markAsRead(notification.id)}
+                    className={`flex flex-col  gap-2 p-2 rounded-md transition-all duration-300 ${
+                      notification?.read
+                        ? "opacity-50 bg-gray-100"
+                        : "hover:bg-blue-50"
+                    }`}
                   >
-                    {notification.notificationName}
-                  </Typography> 
-                  <Typography
-                    className="font-normal text-gray-700 text-sm"
-                  >
-                    {notification.messages}
-                  </Typography>
-                </MenuItem>
-              ))}
+                    <Typography
+                      variant="lead"
+                      className="font-bold text-lg text-gray-700"
+                    >
+                      {notification.notificationName}
+                    </Typography>
+                    <Typography className="font-normal text-gray-700 text-sm">
+                      {notification.messages}
+                    </Typography>
+                  </MenuItem>
+                ))}
               </div>
-        
-              <MenuItem
-                className="flex items-center gap-2 justify-center mt-2 p-2 rounded-md hover:bg-blue-50 transition-all duration-300"
-              >
+
+              <MenuItem className="flex items-center gap-2 justify-center mt-2 p-2 rounded-md hover:bg-blue-50 transition-all duration-300">
                 <Typography
                   variant="small"
                   className="font-medium text-blue-500 hover:text-blue-700"
                 >
-                Đánh dấu đọc tất cả
+                  Đánh dấu đọc tất cả
                 </Typography>
               </MenuItem>
             </MenuList>
@@ -186,38 +187,34 @@ useEffect(() => {
                 <Avatar
                   size="sm"
                   alt={userName}
-                  src="/path-to-avatar-image.jpg"
+                  src={user.avatar}
                   className="border-2 border-white shadow-md"
                 />
               </IconButton>
             </MenuHandler>
             <MenuList className="p-2 mt-2 bg-white rounded-lg shadow-xl border border-gray-200">
               <MenuItem
-                onClick={closeMenu}
+                onClick={() => {
+                  navigate("/user");
+                  closeMenu();
+                }}
                 className="flex items-center gap-2 p-2 rounded-md hover:bg-blue-50 transition-all duration-300"
               >
-                <UserCircleIcon className="h-4 w-4 text-blue-500" />
+                <UserCircleIcon className="h-4 w-4 text-red-800" />
                 <Typography
                   variant="small"
                   className="font-normal text-gray-700"
                 >
-                  Profile
+                  Thông tin cá nhân
                 </Typography>
               </MenuItem>
+
               <MenuItem
-                onClick={closeMenu}
-                className="flex items-center gap-2 p-2 rounded-md hover:bg-blue-50 transition-all duration-300"
-              >
-                <Cog6ToothIcon className="h-4 w-4 text-blue-500" />
-                <Typography
-                  variant="small"
-                  className="font-normal text-gray-700"
-                >
-                  Settings
-                </Typography>
-              </MenuItem>
-              <MenuItem
-                onClick={closeMenu}
+                onClick={() => {
+                  dispatch(logout());
+
+                  closeMenu();
+                }}
                 className="flex items-center gap-2 p-2 rounded-md hover:bg-red-50 transition-all duration-300"
               >
                 <PowerIcon className="h-4 w-4 text-red-500" />
@@ -225,7 +222,7 @@ useEffect(() => {
                   variant="small"
                   className="font-normal text-red-500"
                 >
-                  Logout
+                  Đăng xuất
                 </Typography>
               </MenuItem>
             </MenuList>

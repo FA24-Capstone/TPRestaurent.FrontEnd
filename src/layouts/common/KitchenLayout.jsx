@@ -20,12 +20,6 @@ const menuItems = [
     icon: <FaNewspaper className="h-5 w-5 text-white" />,
     path: "/kitchen/optimize-process",
   },
-
-  {
-    title: "Quản lý món",
-    icon: <FaSignOutAlt className="h-5 w-5 text-white" />,
-    path: "/kitchen/dish-management",
-  },
 ];
 const KitchenLayout = () => {
   return (

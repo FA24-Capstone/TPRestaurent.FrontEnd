@@ -12,6 +12,7 @@ export const AccountApi = {
   GET_ADDRESS: "/api/account/get-customer-info-address",
   CHANGE_EMAIL_REQUEST: "/api/account/change-email-request",
   VERIFY_CHANGE_EMAIL: "/api/account/verify-change-email",
+  LOAD_AVAILABLE_SHIPPER: "/api/account/load-available-shipper",
 };
 
 export const ComboApi = {
@@ -49,6 +50,7 @@ export const OrderApi = {
   GET_ALL_TABLE_DETAIL: "/order/get-all-table-details",
   CALCULATE_DELIVER_ORDER: "/order/calculate-deliver-order",
   UPDATE_ORDER_DETAIL_STATUS: "/order/update-order-detail-status",
+  ASSIGN_ORDER_TO_SHIPPER: "/order/assign-order-for-shipper",
 };
 
 export const ReservationApi = {

@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { message } from "antd";
 
 const initialState = {
   user: null,
@@ -15,6 +16,7 @@ export const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.role = null;
+      message.success("Đăng xuất thành công");
       localStorage.removeItem("token");
     },
     author: (state, action) => {
