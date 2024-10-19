@@ -9,12 +9,14 @@ import { showError } from "../../../util/Utility";
 import { login } from "../../../redux/features/authSlice";
 import { set } from "lodash";
 import { useNavigate } from "react-router-dom";
+import PersonalInformation from "./PersonalInformation";
 
 const { Option } = Select;
 
 const UpdateProfile = () => {
   const [form] = Form.useForm();
   const user = useSelector((state) => state.user.user || {});
+  console.log(user);
   const { callApi, error, loading } = useCallApi();
   const [previewImage, setPreviewImage] = useState(null);
   const [file, setFile] = useState(null); // State to store the file object
@@ -27,6 +29,7 @@ const UpdateProfile = () => {
     formData.append("firstName", values.firstName);
     formData.append("lastName", values.lastName);
     formData.append("dob", values.dob.format("DD/MM/YYYY"));
+    formData.append("gender", values.gender);
     if (file) {
       formData.append("Image", file);
     }
@@ -86,13 +89,36 @@ const UpdateProfile = () => {
     });
     setPreviewImage(user.avatar);
   }, [form, user]);
+  const handleActiveTab = (tab) => {
+    console.log("tab", tab);
+    debugger;
+    switch (tab) {
+      case "0":
+        navigate("/user");
+        return;
+      case "1":
+        navigate("/user/address");
+        break;
+      case "2":
+        navigate("/user/settings");
+        break;
 
+      default:
+        navigate("/user");
+        return;
+    }
+  };
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
         <div className="px-6 py-8 sm:p-10">
           <div className="flex flex-col lg:flex-row gap-10">
             <div className="w-full lg:w-2/3">
+              <PersonalInformation
+                activeTab={0}
+                setActiveTab={handleActiveTab}
+              />
+
               <Form
                 form={form}
                 layout="vertical"
@@ -147,21 +173,24 @@ const UpdateProfile = () => {
                     />
                   </Form.Item>
                 </div>
-                <Form.Item
-                  name="gender"
-                  label="Giới tính"
-                  rules={[
-                    { required: true, message: "Vui lòng chọn giới tính!" },
-                  ]}
-                >
-                  <Select disabled={isDisabled} className="w-full rounded-md">
-                    <Option value={true}>Nam</Option>
-                    <Option value={false}>Nữ</Option>
-                  </Select>
-                </Form.Item>
-                <Form.Item name="dob" label="Ngày sinh">
-                  <DatePicker format={"DD/MM/YYYY"} />
-                </Form.Item>
+                <div className="flex">
+                  <Form.Item
+                    name="gender"
+                    label="Giới tính"
+                    rules={[
+                      { required: true, message: "Vui lòng chọn giới tính!" },
+                    ]}
+                    className="mr-2"
+                  >
+                    <Select disabled={isDisabled} className="w-full rounded-md">
+                      <Option value={true}>Nam</Option>
+                      <Option value={false}>Nữ</Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item name="dob" label="Ngày sinh">
+                    <DatePicker format={"DD/MM/YYYY"} />
+                  </Form.Item>
+                </div>
 
                 <Form.Item>
                   <Button

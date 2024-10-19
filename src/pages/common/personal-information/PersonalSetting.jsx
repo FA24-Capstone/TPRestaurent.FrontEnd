@@ -14,6 +14,8 @@ import { TokenApi } from "../../../api/endpoint";
 import { formatDateTime, showError } from "../../../util/Utility";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../redux/features/authSlice";
+import PersonalInformation from "./PersonalInformation";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
@@ -22,6 +24,7 @@ const PersonalSetting = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const { callApi, error, loading } = useCallApi();
   const user = useSelector((state) => state.user.user || {});
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const fetchDevices = async () => {
     const tokenUser = await callApi(`${TokenApi.GET_USER_TOKEN_BY_IP}`, "POST");
@@ -121,9 +124,29 @@ const PersonalSetting = () => {
         return <Smartphone size={20} />;
     }
   };
+  const handleActiveTab = (tab) => {
+    console.log("tab", tab);
+    debugger;
+    switch (tab) {
+      case "0":
+        navigate("/user");
+        return;
+      case "1":
+        navigate("/user/address");
+        break;
+      case "2":
+        navigate("/user/settings");
+        break;
 
+      default:
+        navigate("/user");
+        return;
+    }
+  };
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto", padding: "24px" }}>
+      <PersonalInformation activeTab={2} setActiveTab={handleActiveTab} />
+
       <Title level={2}>Các thiết bị gần đây bạn đã đăng nhập</Title>
 
       <Space style={{ marginBottom: "24px" }}>

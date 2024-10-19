@@ -19,6 +19,8 @@ import { Edit2, Trash2 } from "lucide-react";
 import { AccountApi, MapApi } from "../../../api/endpoint";
 import { login } from "../../../redux/features/authSlice";
 import { showError } from "../../../util/Utility";
+import { useNavigate } from "react-router-dom";
+import PersonalInformation from "./PersonalInformation";
 
 const PersonalAddress = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -34,6 +36,7 @@ const PersonalAddress = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const fetchData = async () => {
     const response = await callApi(
       `${AccountApi.GET_BY_PHONE}?phoneNumber=${user.phoneNumber}`,
@@ -290,17 +293,42 @@ const PersonalAddress = () => {
       );
     }
   };
+  const handleActiveTab = (tab) => {
+    console.log("tab", tab);
+    debugger;
+    switch (tab) {
+      case "0":
+        navigate("/user");
+        return;
+      case "1":
+        navigate("/user/address");
+        break;
+      case "2":
+        navigate("/user/settings");
+        break;
 
+      default:
+        navigate("/user");
+        return;
+    }
+  };
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6 text-red-900">Địa chỉ của bạn</h1>
-      {renderAddressList()}
-      <Button
-        onClick={() => setIsModalVisible(true)}
-        className="bg-red-800 text-white border-red-800 hover:bg-red-700 hover:border-red-700"
-      >
-        Thêm địa chỉ
-      </Button>
+      <PersonalInformation activeTab={1} setActiveTab={handleActiveTab} />
+      <div className="container">
+        <h1 className="text-3xl font-bold mb-6 text-red-900">
+          Địa chỉ của bạn
+        </h1>
+
+        {renderAddressList()}
+        <Button
+          onClick={() => setIsModalVisible(true)}
+          className="bg-red-800 text-white border-red-800 hover:bg-red-700 hover:border-red-700"
+        >
+          Thêm địa chỉ
+        </Button>
+      </div>
+
       <Modal
         title={editingAddress ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ"}
         open={isModalVisible}

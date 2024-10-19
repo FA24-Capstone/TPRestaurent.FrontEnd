@@ -122,11 +122,11 @@ function Routers() {
       children: [
         {
           index: true,
-          element: <PersonalInformation />,
+          element: <UpdateProfile />,
         },
         {
           path: "info",
-          element: <PersonalInformation />,
+          element: <UpdateProfile />,
         },
         {
           path: "order",

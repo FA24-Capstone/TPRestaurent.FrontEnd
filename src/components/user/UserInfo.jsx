@@ -54,7 +54,7 @@ const UserInfo = ({ userData, handleOpenUpdate }) => {
                 } `}
               >
                 {userData?.isVerified
-                  ? "Tài khoản đã xác thực"
+                  ? "Tài khoản đã xác thực qua số điện thoại"
                   : "Tài khoản chưa được xác thực"}
               </p>
             </div>

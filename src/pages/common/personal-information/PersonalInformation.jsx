@@ -4,27 +4,12 @@ import PersonalAddress from "./PersonalAddress";
 import TabMananger from "../../../components/tab/TabManager";
 import PersonalSetting from "./PersonalSetting";
 
-const PersonalInformation = () => {
-  const [activeTab, setActiveTab] = useState("personal");
-
+const PersonalInformation = ({ activeTab = 0, setActiveTab }) => {
   const tabs = [
-    { value: "personal", label: "Thông tin cá nhân" },
-    { value: "address", label: "Địa chỉ giao hàng" },
-    { value: "settings", label: "Cài đặt tài khoản" },
+    { value: "0", label: "Thông tin cá nhân" },
+    { value: "1", label: "Địa chỉ giao hàng" },
+    { value: "2", label: "Cài đặt tài khoản" },
   ];
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "personal":
-        return <UpdateProfile />;
-      case "address":
-        return <PersonalAddress />;
-      case "settings":
-        return <PersonalSetting />;
-      default:
-        return null;
-    }
-  };
 
   return (
     <div className="w-full max-w-3xl mx-auto">
@@ -39,8 +24,6 @@ const PersonalInformation = () => {
           setActiveTab={setActiveTab}
         />
       </div>
-
-      <div className="mt-4">{renderTabContent()}</div>
     </div>
   );
 };
