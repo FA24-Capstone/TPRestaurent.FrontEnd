@@ -10,6 +10,8 @@ export const AccountApi = {
   UPDATE_ADDRESS: "/api/account/update-customer-info-address",
   DELETE_ADDRESS: "/api/account/delete-customer-info-address",
   GET_ADDRESS: "/api/account/get-customer-info-address",
+  CHANGE_EMAIL_REQUEST: "/api/account/change-email-request",
+  VERIFY_CHANGE_EMAIL: "/api/account/verify-change-email",
 };
 
 export const ComboApi = {
@@ -113,6 +115,7 @@ export const TokenApi = {
   GET_USER_TOKEN_BY_IP: "/token/get-user-token-by-ip",
 };
 
-export const NotificationApi={
-GET_ALL_NOTIFICATION_BY_USER:"/notification/get-all-notification-by-account-id",
-}
+export const NotificationApi = {
+  GET_ALL_NOTIFICATION_BY_USER:
+    "/notification/get-all-notification-by-account-id",
+};

@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Select, Button, Upload, message, DatePicker } from "antd";
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  Upload,
+  message,
+  DatePicker,
+  Modal,
+} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +19,8 @@ import { login } from "../../../redux/features/authSlice";
 import { set } from "lodash";
 import { useNavigate } from "react-router-dom";
 import PersonalInformation from "./PersonalInformation";
+import OTP from "antd/es/input/OTP";
+import OTPInput from "react-otp-input";
 
 const { Option } = Select;
 
@@ -21,14 +32,34 @@ const UpdateProfile = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [file, setFile] = useState(null); // State to store the file object
   const [isDisabled, setIsDisabled] = useState(true);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otp, setOtp] = useState(""); // State to store the OTP input
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const fetchUser = async () => {
+    const response = await callApi(
+      `${AccountApi.GET_BY_PHONE}?phoneNumber=${user.phoneNumber}`,
+      "GET"
+    );
+    if (response.isSuccess) {
+      dispatch(login(response.result));
+      if (user.isManuallyCreated) {
+        message.warning(
+          "Bạn cần cập nhật địa chỉ mua hàng tại đây, chúng tôi sẽ chuyển bạn trong vòng 3s tiếp theo"
+        );
+        setTimeout(() => {
+          navigate("/user/address");
+        }, 3000);
+      }
+    }
+  };
   const onFinish = async (values) => {
     const formData = new FormData();
     formData.append("accountId", user.id);
     formData.append("firstName", values.firstName);
     formData.append("lastName", values.lastName);
-    formData.append("dob", values.dob.format("DD/MM/YYYY"));
+    formData.append("dob", new Date(values.dob).toDateString("YYYY-MM-DD"));
     formData.append("gender", values.gender);
     if (file) {
       formData.append("Image", file);
@@ -39,22 +70,8 @@ const UpdateProfile = () => {
       formData
     );
     if (response.isSuccess) {
-      message.success("Profile updated successfully");
-      const fetchUser = await callApi(
-        `${AccountApi.GET_BY_PHONE}?phoneNumber=${user.phoneNumber}`,
-        "GET"
-      );
-      if (fetchUser.isSuccess) {
-        dispatch(login(fetchUser.result));
-        if (user.isManuallyCreated) {
-          message.warning(
-            "Bạn cần cập nhật địa chỉ mua hàng tại đây, chúng tôi sẽ chuyển bạn trong vòng 3s tiếp theo"
-          );
-          setTimeout(() => {
-            navigate("/user/address");
-          }, 3000);
-        }
-      }
+      await fetchUser();
+      message.success("Đã cập nhật thông tin thành công!");
     } else {
       showError(error);
     }
@@ -83,7 +100,7 @@ const UpdateProfile = () => {
       firstName: user.firstName,
       lastName: user.lastName,
       phone: user.phoneNumber,
-      dob: moment("2002-12-03"),
+      dob: moment(user.dob),
       gender: user.gender,
       email: user.email,
     });
@@ -108,6 +125,36 @@ const UpdateProfile = () => {
         return;
     }
   };
+  const handleChangeEmailRequest = async () => {
+    const response = await callApi(
+      `${AccountApi.CHANGE_EMAIL_REQUEST}?accountId=${
+        user.id
+      }&newEmail=${form.getFieldValue("email")}`,
+      "POST"
+    );
+    if (response.isSuccess) {
+      message.success("Đã gửi yêu cầu xác nhận email!");
+      setShowOtpModal(true);
+    } else {
+      showError(error);
+    }
+  };
+  const handleOtpSubmit = async () => {
+    const response = await callApi(
+      `${AccountApi.VERIFY_CHANGE_EMAIL}?accountId=${
+        user.id
+      }&otpCode=${otp}&email=${form.getFieldValue("email")}`,
+      "POST"
+    );
+    if (response.isSuccess) {
+      await fetchUser();
+      message.success("Email đã được xác nhận!");
+      setShowOtpModal(false);
+    } else {
+      showError(error);
+    }
+  };
+
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
@@ -138,7 +185,8 @@ const UpdateProfile = () => {
                 {isDisabled && (
                   <Button
                     className="bg-red-900 text-white"
-                    onClick={() => setIsDisabled(!isDisabled)}
+                    onClick={() => handleChangeEmailRequest()}
+                    loading={loading}
                   >
                     Xác nhận email
                   </Button>
@@ -155,10 +203,7 @@ const UpdateProfile = () => {
                       },
                     ]}
                   >
-                    <Input
-                      disabled={isDisabled}
-                      className="w-full rounded-md"
-                    />
+                    <Input className="w-full rounded-md" />
                   </Form.Item>
                   <Form.Item
                     name="firstName"
@@ -167,10 +212,7 @@ const UpdateProfile = () => {
                       { required: true, message: "Vui lòng nhập tên của bạn!" },
                     ]}
                   >
-                    <Input
-                      disabled={isDisabled}
-                      className="w-full rounded-md"
-                    />
+                    <Input className="w-full rounded-md" />
                   </Form.Item>
                 </div>
                 <div className="flex">
@@ -182,13 +224,13 @@ const UpdateProfile = () => {
                     ]}
                     className="mr-2"
                   >
-                    <Select disabled={isDisabled} className="w-full rounded-md">
+                    <Select className="w-full rounded-md">
                       <Option value={true}>Nam</Option>
                       <Option value={false}>Nữ</Option>
                     </Select>
                   </Form.Item>
                   <Form.Item name="dob" label="Ngày sinh">
-                    <DatePicker format={"DD/MM/YYYY"} />
+                    <DatePicker format={"DD-MM-YYYY"} />
                   </Form.Item>
                 </div>
 
@@ -251,6 +293,36 @@ const UpdateProfile = () => {
           </div>
         </div>
       </div>
+      <Modal
+        open={showOtpModal}
+        onCancel={() => setShowOtpModal(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setShowOtpModal(false)}>
+            Huỷ
+          </Button>,
+          <Button
+            key="submit"
+            className="bg-red-800 text-white"
+            onClick={handleOtpSubmit}
+            loading={loading}
+          >
+            Xác nhận
+          </Button>,
+        ]}
+      >
+        <div className="flex flex-col justify-center items-center">
+          <h2 className="text-xl font-bold mb-4">
+            Nhập mã OTP đã được gửi đến email của bạn
+          </h2>
+          <OTP
+            value={otp}
+            onChange={(value) => {
+              setOtp(value);
+            }}
+            placeholder="Enter OTP"
+          />
+        </div>
+      </Modal>
     </div>
   );
 };
