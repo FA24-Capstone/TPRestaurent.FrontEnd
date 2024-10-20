@@ -83,10 +83,6 @@ export const HomePage = () => {
     { name: "SAUCE", icon: "fa-martini-glass" },
   ];
 
-  if (loading) {
-    return <Skeleton active key={loading} />;
-  }
-
   return (
     <>
       <>
@@ -98,14 +94,18 @@ export const HomePage = () => {
           <TopVoucher />
           <IntroHome />
           <BestSeller />
-          <MenuDish
-            dishes={dishes}
-            handleAddItem={handleAddItem}
-            fetchDishes={fetchData}
-            setSelectedCategory={setSelectedCategory}
-            selectedCategory={selectedCategory}
-            menuCategories={menuCategories}
-          />
+          {loading && <Skeleton />}
+          {!loading && (
+            <MenuDish
+              dishes={dishes}
+              handleAddItem={handleAddItem}
+              fetchDishes={fetchData}
+              setSelectedCategory={setSelectedCategory}
+              selectedCategory={selectedCategory}
+              menuCategories={menuCategories}
+            />
+          )}
+
           <TopFeedback />
         </div>
       </>

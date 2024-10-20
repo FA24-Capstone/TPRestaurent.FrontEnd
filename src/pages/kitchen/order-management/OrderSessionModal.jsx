@@ -2,6 +2,7 @@ import React from "react";
 import { formatDateTime, formatPrice } from "../../../util/Utility";
 import { CheckCircleIcon, ClockIcon, XIcon } from "lucide-react";
 import { Table } from "antd";
+import { StyledTable } from "../../../components/custom-ui/StyledTable";
 
 export default function OrderSessionModal({ orderSession, open, onClose }) {
   const { orderSession: session, table, order, orderDetails } = orderSession;
@@ -146,25 +147,27 @@ export default function OrderSessionModal({ orderSession, open, onClose }) {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
-                <h3 className="text-xl font-semibold text-gray-800 uppercase">
-                  Thông tin bàn
-                </h3>
-                <div className="space-y-2">
-                  <p className="flex justify-between">
-                    <span className="font-medium text-gray-600">Mã bàn:</span>
-                    <span>{table?.tableName}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="font-medium text-gray-600">Bàn:</span>
-                    <span>{table?.tableSize.vietnameseName} người</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="font-medium text-gray-600">Loại:</span>
-                    <span>{table?.room.name}</span>
-                  </p>
+              {table && (
+                <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
+                  <h3 className="text-xl font-semibold text-gray-800 uppercase">
+                    Thông tin bàn
+                  </h3>
+                  <div className="space-y-2">
+                    <p className="flex justify-between">
+                      <span className="font-medium text-gray-600">Mã bàn:</span>
+                      <span>{table?.tableName}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="font-medium text-gray-600">Bàn:</span>
+                      <span>{table?.tableSize.vietnameseName} người</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="font-medium text-gray-600">Loại:</span>
+                      <span>{table?.room.name}</span>
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
@@ -172,7 +175,7 @@ export default function OrderSessionModal({ orderSession, open, onClose }) {
                 Chi tiết món
               </h3>
               <div className="space-y-4">
-                <Table
+                <StyledTable
                   columns={columns}
                   dataSource={orderDetails}
                   rowKey={(record) => record.orderDetail.id}

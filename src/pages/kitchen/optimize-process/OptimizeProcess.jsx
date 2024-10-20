@@ -158,9 +158,6 @@ const OptimizeProcess = () => {
       }
     };
   }, [connection]);
-  if (loading) {
-    return <Skeleton active />;
-  }
 
   return (
     <div className="px-10 bg-white rounded-lg py-4 shadow-lg">
@@ -189,15 +186,18 @@ const OptimizeProcess = () => {
                       Món trùng đơn
                     </h3>
                     <div className="w-full">
-                      <StyledTable
-                        dataSource={mutualOrderDishes}
-                        columns={columns}
-                        pagination={false}
-                        rowKey={uniqueId()}
-                        size="small"
-                        loading={loading}
-                        scroll={{ x: 600 }}
-                      ></StyledTable>
+                      {loading && <Skeleton />}
+                      {!loading && (
+                        <StyledTable
+                          dataSource={mutualOrderDishes}
+                          columns={columns}
+                          pagination={false}
+                          rowKey={uniqueId()}
+                          size="small"
+                          loading={loading}
+                          scroll={{ x: 600 }}
+                        />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -207,14 +207,17 @@ const OptimizeProcess = () => {
                   Món lẻ đơn
                 </h3>
                 <div className="overflow-x-auto w-full">
-                  <StyledTable
-                    dataSource={singleOrderDishes}
-                    columns={columns}
-                    pagination={false}
-                    rowKey="id"
-                    size="small"
-                    scroll={{ x: 600 }}
-                  />
+                  {loading && <Skeleton />}
+                  {!loading && (
+                    <StyledTable
+                      dataSource={singleOrderDishes}
+                      columns={columns}
+                      pagination={false}
+                      rowKey="id"
+                      size="small"
+                      scroll={{ x: 600 }}
+                    />
+                  )}
                 </div>
               </div>
             </div>

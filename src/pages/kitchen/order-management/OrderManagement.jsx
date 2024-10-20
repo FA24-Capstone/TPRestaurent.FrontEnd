@@ -364,10 +364,6 @@ const OrderManagement = () => {
     }
   };
 
-  if (loading) {
-    return <Skeleton loading={loading} />;
-  }
-
   const updateOrderSessionStatus = async (orderSessionId, status) => {
     const response = await callApi(
       `${OrderSessionApi.UPDATE_ORDER_SESSION_STATUS}?id=${orderSessionId}&status=${status}`,
@@ -413,24 +409,27 @@ const OrderManagement = () => {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-1 overflow-y-scroll max-h-[600px]">
-          {orderSession.map((order) => (
-            <OrderCard
-              orderNumber={order.orderSession?.orderSessionNumber}
-              date={
-                order.order?.mealTime ||
-                order.order?.reservationDate ||
-                order.order?.orderDate
-              }
-              tableNumber={order.table?.tableName}
-              items={order.orderDetails}
-              status={order.orderSession?.orderSessionStatusId}
-              fetchOrderDetail={() =>
-                fetchOrderDetail(order?.orderSession?.orderSessionId)
-              }
-              updateStatus={updateOrderSessionStatus}
-              id={order.orderSession?.orderSessionId}
-            />
-          ))}
+          {loading && <Skeleton loading={loading} />}
+          {!loading &&
+            orderSession.length > 0 &&
+            orderSession.map((order) => (
+              <OrderCard
+                orderNumber={order.orderSession?.orderSessionNumber}
+                date={
+                  order.order?.mealTime ||
+                  order.order?.reservationDate ||
+                  order.order?.orderDate
+                }
+                tableNumber={order.table?.tableName}
+                items={order.orderDetails}
+                status={order.orderSession?.orderSessionStatusId}
+                fetchOrderDetail={() =>
+                  fetchOrderDetail(order?.orderSession?.orderSessionId)
+                }
+                updateStatus={updateOrderSessionStatus}
+                id={order.orderSession?.orderSessionId}
+              />
+            ))}
         </div>
         <Pagination
           currentPage={1}
