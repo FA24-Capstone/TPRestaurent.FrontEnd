@@ -7,6 +7,7 @@ import {
   message,
   Modal,
   Switch,
+  Tag,
   Typography,
 } from "antd";
 import {
@@ -224,9 +225,9 @@ const CartSummary = ({ handleClose }) => {
     return couponsData
       .filter((coupon) => selectedCoupons.includes(coupon.couponProgramId))
       .map((coupon) => (
-        <Badge key={coupon.couponProgramId}>
+        <Tag color="volcano-inverse" key={coupon.couponProgramId}>
           {`Giảm ${coupon.discountPercent}% `}
-        </Badge>
+        </Tag>
       ));
   };
 
