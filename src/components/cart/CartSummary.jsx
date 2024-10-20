@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Badge,
   Button,
   Checkbox,
   Input,
@@ -35,12 +36,13 @@ import PaymentMethodSelector from "./PaymentMethodSelector";
 import { clearCart, getTotal } from "../../redux/features/cartReservationSlice";
 import useCallApi from "../../api/useCallApi";
 const { Title, Text } = Typography;
-import { AccountApi, OrderApi } from "../../api/endpoint";
+import { AccountApi, CouponApi, OrderApi } from "../../api/endpoint";
 import LoadingOverlay from "../loading/LoadingOverlay";
 import AddressModal from "../user/AddressModal";
 import PolicyOrder from "../policy/PolicyOrder";
 import { IconButton } from "@material-tailwind/react";
 import { login } from "../../redux/features/authSlice";
+import CouponSelectionModal from "../coupon/CouponSelectionModal";
 const InfoItem = ({ icon, label, value }) => (
   <div className="flex items-center mb-2">
     {icon}
@@ -83,6 +85,14 @@ const CartSummary = ({ handleClose }) => {
   const [editData, setEditData] = useState(null);
   const [note, setNote] = useState("");
   const [deliveryOrder, setDeliveryOrder] = useState(0);
+  const [isModalCouponVisible, setIsModalCouponVisible] = useState(false);
+  const [selectedCoupons, setSelectedCoupons] = useState([]);
+  const [couponsData, setCouponsData] = useState([]);
+
+  console.log("selectedCoupons", selectedCoupons);
+  const handleSelectCoupons = (coupons) => {
+    setSelectedCoupons(coupons);
+  };
   const handleSwitchChange = (event) => {
     setIsLoyaltyEnabled(event);
   };
@@ -144,7 +154,7 @@ const CartSummary = ({ handleClose }) => {
       orderDetailsDtos: reservationDishDtos,
 
       deliveryOrder: {
-        couponIds: [],
+        couponIds: selectedCoupons,
         loyalPointToUse: isLoyaltyEnabled ? user.loyaltyPoint : 0,
         paymentMethod: selectedMethod,
       },
@@ -200,7 +210,26 @@ const CartSummary = ({ handleClose }) => {
   if (loading) {
     return <LoadingOverlay isLoading={loading} />;
   }
-  console.log("isAgree", isAgree);
+  const handleCoupons = async () => {
+    debugger;
+    setIsModalCouponVisible(true);
+    const response = await callApi(`${CouponApi.GET_ALL}/1/100`, "GET");
+    if (response.isSuccess) {
+      setCouponsData(response.result?.items);
+    } else {
+      showError(error);
+    }
+  };
+  const renderPreviewCoupon = () => {
+    return couponsData
+      .filter((coupon) => selectedCoupons.includes(coupon.couponProgramId))
+      .map((coupon) => (
+        <Badge key={coupon.couponProgramId}>
+          {`Giảm ${coupon.discountPercent}% `}
+        </Badge>
+      ));
+  };
+
   return (
     <div className="container my-4 p-6 bg-white">
       <Title level={3} className="uppercase text-center mb-6">
@@ -247,8 +276,12 @@ const CartSummary = ({ handleClose }) => {
             </Title>
             <ActionItem icon={<TagOutlined />} label="Voucher">
               <div className="flex items-center">
-                <Text className="mr-2">Giảm 10% hóa đơn</Text>
-                <button className="bg-red-800 hover:bg-red-800 text-white px-4 py-1 rounded-md transition duration-300">
+                {/* <Text className="mr-2">Giảm 10% hóa đơn</Text> */}
+                {renderPreviewCoupon()}
+                <button
+                  className="bg-red-800 hover:bg-red-800 text-white px-4 py-1 rounded-md transition duration-300"
+                  onClick={() => handleCoupons()}
+                >
                   Chọn
                 </button>
               </div>
@@ -432,6 +465,13 @@ const CartSummary = ({ handleClose }) => {
         setEditData={setEditData}
         fetchData={fetchData}
         key={"address"}
+      />
+      <CouponSelectionModal
+        visible={isModalCouponVisible}
+        onClose={() => setIsModalCouponVisible(false)}
+        coupons={couponsData}
+        onSelectCoupons={handleSelectCoupons}
+        totalPrice={renderAfterPrice()}
       />
     </div>
   );
