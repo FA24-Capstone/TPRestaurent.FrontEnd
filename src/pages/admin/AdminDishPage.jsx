@@ -19,6 +19,7 @@ import NavigateCreateMenu from "./menu/NavigateCreateMenu";
 import { uniqueId } from "lodash";
 import { message } from "antd";
 import { showError } from "../../util/Utility";
+import { NavLink } from "react-router-dom";
 const AdminDishPage = ({ initData, tab }) => {
   const MenuTab = [
     {
@@ -153,6 +154,7 @@ const AdminDishPage = ({ initData, tab }) => {
         </div>
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <div className="mb-4">{renderMenuTab()}</div>
+
           <div className="w-full md:w-72">
             <Input
               label="Tìm kiếm"
@@ -163,6 +165,12 @@ const AdminDishPage = ({ initData, tab }) => {
           </div>
         </div>
       </CardHeader>
+      <NavLink
+        to="/admin/daily-sell-management"
+        className={"text-red-600 px-6 font-bold uppercase underline"}
+      >
+        Cập nhật số lượng món ăn
+      </NavLink>
       <CardBody key={uniqueId()} className="overflow-y-scroll h-[500px]">
         {Number(selectedMenuTab) === 1 ? (
           <DishTable
