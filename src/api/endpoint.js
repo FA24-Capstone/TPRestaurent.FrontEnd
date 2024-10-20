@@ -13,6 +13,7 @@ export const AccountApi = {
   CHANGE_EMAIL_REQUEST: "/api/account/change-email-request",
   VERIFY_CHANGE_EMAIL: "/api/account/verify-change-email",
   LOAD_AVAILABLE_SHIPPER: "/api/account/load-available-shipper",
+  GET_ACCOUNTS_BY_ROLE_NAME: "/api/account/get-accounts-by-role-name",
 };
 
 export const ComboApi = {

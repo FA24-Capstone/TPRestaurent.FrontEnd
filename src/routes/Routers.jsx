@@ -43,6 +43,8 @@ import DailySellManagement from "../pages/admin/daily-sell/DailySellManagement";
 import UpdateProfile from "../pages/common/personal-information/UpdateProfile";
 import PersonalAddress from "../pages/common/personal-information/PersonalAddress";
 import PersonalSetting from "../pages/common/personal-information/PersonalSetting";
+import AdminUserPage from "../pages/admin/user/AdminUserPage";
+import AdminShipperPage from "../pages/admin/user/AdminShipperPage";
 
 function Routers() {
   const routing = useRoutes([
@@ -221,6 +223,14 @@ function Routers() {
         {
           path: "daily-sell-management",
           element: <DailySellManagement />,
+        },
+        {
+          path: "user-management",
+          element: <AdminUserPage />,
+        },
+        {
+          path: "shipper-management",
+          element: <AdminShipperPage />,
         },
       ],
     },

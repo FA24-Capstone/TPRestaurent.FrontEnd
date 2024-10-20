@@ -7,6 +7,7 @@ import {
   FaEnvelope,
   FaShoppingBag,
   FaSignOutAlt,
+  FaUser,
 } from "react-icons/fa";
 import { GiCampCookingPot } from "react-icons/gi";
 import { TbTransactionDollar } from "react-icons/tb";
@@ -27,6 +28,14 @@ const menuItems = [
     subItems: [
       { title: "Quản lý món ăn", path: "/admin/dish-management" },
       { title: "Quản lý bán hàng ngày", path: "/admin/daily-sell-management" },
+    ],
+  },
+  {
+    title: "Quản lý tài khoản",
+    icon: <FaUser className="h-5 w-5 text-white" />,
+    subItems: [
+      { title: "Quản lý người dùng", path: "/admin/user-management" },
+      { title: "Quản lý shipper", path: "/admin/shipper-management" },
     ],
   },
   {
