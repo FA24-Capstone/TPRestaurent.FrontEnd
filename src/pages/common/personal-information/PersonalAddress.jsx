@@ -265,7 +265,7 @@ const PersonalAddress = () => {
 
                   const response = await callApi(
                     `${AccountApi.DELETE_ADDRESS}?customerInfoAddressId=${record.customerInfoAddressId}`,
-                    "DELETE"
+                    "PUT"
                   );
                   if (response.isSuccess) {
                     message.success("Xóa địa chỉ thành công!");

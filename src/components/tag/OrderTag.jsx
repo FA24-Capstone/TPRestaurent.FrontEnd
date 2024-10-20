@@ -32,7 +32,7 @@ const OrderTag = ({ orderStatusId }) => {
       case 4:
         return {
           color: "purple",
-          text: "Đang chờ",
+          text: "Đặt trước",
           icon: <ClockCircleOutlined />,
         };
       case 5:
@@ -50,23 +50,27 @@ const OrderTag = ({ orderStatusId }) => {
       case 7:
         return {
           color: "orange",
-          text: "Đang giao hàng",
+          text: "Đã bàn giao cho shipper",
           icon: <CarOutlined />,
         };
       case 8:
+        return {
+          color: "orange",
+          text: "Đang giao hàng",
+          icon: <CarOutlined />,
+        };
+      case 9:
         return {
           color: "success",
           text: "Hoàn thành",
           icon: <CheckCircleOutlined />,
         };
-      case 9:
+      case 10:
         return {
           color: "error",
           text: "Đã hủy",
           icon: <CloseCircleOutlined />,
         };
-      default:
-        return { color: "default", text: "Không xác định", icon: null };
     }
   };
 
