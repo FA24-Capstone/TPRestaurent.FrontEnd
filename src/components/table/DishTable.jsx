@@ -9,6 +9,7 @@ import {
 import { uniqueId } from "lodash";
 import { useNavigate } from "react-router-dom";
 import { formatPrice } from "../../util/Utility";
+import { StyledTable } from "../custom-ui/StyledTable";
 
 const DishTable = ({
   dishes,
@@ -77,36 +78,41 @@ const DishTable = ({
       title: "STT",
       dataIndex: "index",
       key: uniqueId(),
-      align:"center",
+      align: "center",
       render: (_, record) => <span>{record.dish.dishId.substring(0, 8)}</span>,
     },
     {
       title: "Hình ảnh",
       dataIndex: "image",
       key: "image",
-      align:"center",
+      align: "center",
       render: (_, record) => (
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-      <Image
-        src={record.dish.image}
-        alt={record.dish.name}
-        width={100}
-        height={100}
-        style={{
-          objectFit: "cover",
-          borderRadius: "20px",
-          display: "block"
-        }}
-      />
-    </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Image
+            src={record.dish.image}
+            alt={record.dish.name}
+            width={100}
+            height={100}
+            style={{
+              objectFit: "cover",
+              borderRadius: "20px",
+              display: "block",
+            }}
+          />
+        </div>
       ),
-      
     },
     {
       title: "Tên món ",
       dataIndex: "name",
       key: "name",
-      align:"center",
+      align: "center",
 
       render: (_, record) => (
         <span className="uppercase">{record.dish.name}</span>
@@ -195,7 +201,7 @@ const DishTable = ({
   ];
 
   return (
-    <Table
+    <StyledTable
       columns={columns}
       dataSource={dishes}
       pagination={false}

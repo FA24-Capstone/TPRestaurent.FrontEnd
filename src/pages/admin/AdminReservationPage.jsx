@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { formatDateTime } from "../../util/Utility";
+import { formatDateTime, formatPrice } from "../../util/Utility";
 import { Table } from "antd";
 import Pagination from "../../components/pagination/Pagination";
 import useCallApi from "../../api/useCallApi";
@@ -20,6 +20,7 @@ import TabMananger from "../../components/tab/TabManager";
 import OrderTag from "../../components/tag/OrderTag";
 import { OrderApi } from "../../api/endpoint";
 import ModalReservationDetail from "../../components/reservation/modal/ModalReservationDetail";
+import { StyledTable } from "../../components/custom-ui/StyledTable";
 
 const TABS = [
   {
@@ -103,7 +104,7 @@ export function AdminReservationPage() {
       dataIndex: "totalAmount",
       key: "totalAmount",
       render: (_, record) => (
-        <Typography>{record.totalAmount.toLocaleString()} VND</Typography>
+        <Typography>{formatPrice(record.totalAmount)} </Typography>
       ),
     },
     {
@@ -191,7 +192,7 @@ export function AdminReservationPage() {
         </div>
       </CardHeader>
       <CardBody className="overflow-auto h-[550px]">
-        <Table
+        <StyledTable
           columns={columns}
           dataSource={reservations}
           rowKey="reservationId"

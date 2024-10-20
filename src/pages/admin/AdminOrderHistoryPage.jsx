@@ -19,6 +19,7 @@ import TabMananger from "../../components/tab/TabManager";
 import { AccountApi, OrderApi } from "../../api/endpoint";
 import OrderTag from "../../components/tag/OrderTag";
 import ModalReservationDetail from "../../components/reservation/modal/ModalReservationDetail";
+import { StyledTable } from "../../components/custom-ui/StyledTable";
 
 const TABS = [
   {
@@ -289,7 +290,7 @@ export function AdminOrderHistoryPage() {
             </div>
           )}
           <div className="flex-1">
-            <Table
+            <StyledTable
               columns={columns}
               dataSource={data}
               pagination={false}

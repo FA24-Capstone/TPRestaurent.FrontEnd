@@ -4,6 +4,7 @@ import VNpay_Logo from "../../../assets/imgs/payment-icon/VNpay_Logo.png";
 import MoMo_Logo from "../../../assets/imgs/payment-icon/MoMo_Logo.png";
 import { CreditCard, DollarSign, ShoppingCart } from "lucide-react";
 import { formatDateTime, formatPrice } from "../../../util/Utility";
+import { StyledTable } from "../../../components/custom-ui/StyledTable";
 const { RangePicker } = DatePicker;
 
 const statusMap = {
@@ -135,7 +136,7 @@ const TransactionTable = ({ data, loading }) => {
 
   return (
     <div>
-      <Table
+      <StyledTable
         columns={columns}
         dataSource={data}
         loading={loading}

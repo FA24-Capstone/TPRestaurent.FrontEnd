@@ -20,6 +20,7 @@ import TabMananger from "../../components/tab/TabManager";
 import { OrderApi } from "../../api/endpoint";
 import OrderTag from "../../components/tag/OrderTag";
 import ModalReservationDetail from "../../components/reservation/modal/ModalReservationDetail";
+import { StyledTable } from "../../components/custom-ui/StyledTable";
 
 const TABS = [
   {
@@ -194,7 +195,7 @@ export function AdminMealHistoryPage() {
           </div>
         </CardHeader>
         <CardBody className="overflow-auto h-[550px]">
-          <Table
+          <StyledTable
             columns={columns}
             dataSource={data}
             pagination={false}

@@ -10,6 +10,8 @@ import OrderDetailModal from "./OrderDetailModal";
 import * as signalR from "@microsoft/signalr";
 import { baseUrl } from "../../../api/config/axios";
 import notification_sound from "../../../assets/sound/kitchen.mp3";
+import styled from "styled-components";
+import { StyledTable } from "../../../components/custom-ui/StyledTable";
 const { Title, Text } = Typography;
 
 const OptimizeProcess = () => {
@@ -51,7 +53,7 @@ const OptimizeProcess = () => {
       render: (_, record) => (
         <div className="flex items-center justify-center">
           <Image
-            className="rounded-md"
+            className="rounded-md block"
             src={record.dish?.image}
             alt="Food"
             width={100}
@@ -67,9 +69,9 @@ const OptimizeProcess = () => {
       key: "quantity",
       align: "center",
       render: (_, record) => (
-        <div className="space-y-4">
+        <div className="">
           {record.total.map((item, index) => (
-            <div key={index} className="p-4  rounded-lg">
+            <div key={index} className=" rounded-lg">
               <div className="flex space-x-4">
                 <span className="block text-sm font-bold mb-2">
                   {item.dishSize.vietnameseName}
@@ -159,6 +161,7 @@ const OptimizeProcess = () => {
   if (loading) {
     return <Skeleton active />;
   }
+
   return (
     <div className="px-10 bg-white rounded-lg py-4 shadow-lg">
       <h5 className="text-center text-red-800 font-bold text-2xl">
@@ -177,7 +180,7 @@ const OptimizeProcess = () => {
         <Title level={3}>BẢNG ƯU TIÊN MÓN CẦN CHẾ BIẾN</Title>
 
         <div className="grid grid-cols-1 2xl:grid-cols-12 ">
-          <div className=" col-span-12  2xl:col-span-9 ">
+          <div className=" col-span-12  2xl:col-span-12 ">
             <div className="grid  grid-cols-1 xl:grid-cols-2 gap-2">
               <div className="shadow-md rounded-md">
                 <div className="">
@@ -186,7 +189,7 @@ const OptimizeProcess = () => {
                       Món trùng đơn
                     </h3>
                     <div className="w-full">
-                      <Table
+                      <StyledTable
                         dataSource={mutualOrderDishes}
                         columns={columns}
                         pagination={false}
@@ -194,7 +197,7 @@ const OptimizeProcess = () => {
                         size="small"
                         loading={loading}
                         scroll={{ x: 600 }}
-                      />
+                      ></StyledTable>
                     </div>
                   </div>
                 </div>
@@ -204,7 +207,7 @@ const OptimizeProcess = () => {
                   Món lẻ đơn
                 </h3>
                 <div className="overflow-x-auto w-full">
-                  <Table
+                  <StyledTable
                     dataSource={singleOrderDishes}
                     columns={columns}
                     pagination={false}
@@ -216,94 +219,6 @@ const OptimizeProcess = () => {
               </div>
             </div>
           </div>
-          {/* <div className="col-span-3 w-full  border-l-2 border-gray-300">
-            <div className="xl:bg-white rounded-lg p-6 h-full flex flex-col justify-between">
-              <div className="flex justify-center mb-4">
-                <h3 className="text-red-800 uppercase text-2xl font-bold text-center">
-                  Thông báo về đặt món
-                </h3>
-              </div>
-              <div className="flex-grow flex flex-col space-y-4 max-h-[30rem]  overflow-y-auto">
-                <div className="border-2 border-red-600 rounded-full shadow-md w-fit px-6 py-3 flex items-center ">
-                  <div className="flex flex-col items-start">
-                    <p className="text-red-600 font-semibold text-sm">
-                      BÀN TBL1 MỚI ĐẶT MÓN
-                    </p>
-                    <div className="flex justify-center  text-sm text-gray-600">
-                      <Clock className="mr-2" size={16} />
-                      <p>2 phút trước</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="border-2 border-red-600 rounded-full shadow-md w-fit px-6 py-3 flex items-center ">
-                  <div className="flex flex-col items-start">
-                    <p className="text-red-600 font-semibold text-sm">
-                      BÀN TBL1 MỚI ĐẶT MÓN
-                    </p>
-                    <div className="flex justify-center  text-sm text-gray-600">
-                      <Clock className="mr-2" size={16} />
-                      <p>2 phút trước</p>
-                    </div>
-                  </div>
-                </div>{" "}
-                <div className="border-2 border-red-600 rounded-full shadow-md w-fit px-6 py-3 flex items-center ">
-                  <div className="flex flex-col items-start">
-                    <p className="text-red-600 font-semibold text-sm">
-                      BÀN TBL1 MỚI ĐẶT MÓN
-                    </p>
-                    <div className="flex justify-center  text-sm text-gray-600">
-                      <Clock className="mr-2" size={16} />
-                      <p>2 phút trước</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="border-2 border-red-600 rounded-full shadow-md w-fit px-6 py-3 flex items-center ">
-                  <div className="flex flex-col items-start">
-                    <p className="text-red-600 font-semibold text-sm">
-                      BÀN TBL1 MỚI ĐẶT MÓN
-                    </p>
-                    <div className="flex justify-center  text-sm text-gray-600">
-                      <Clock className="mr-2" size={16} />
-                      <p>2 phút trước</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="border-2 border-red-600 rounded-full shadow-md w-fit px-6 py-3 flex items-center ">
-                  <div className="flex flex-col items-start">
-                    <p className="text-red-600 font-semibold text-sm">
-                      BÀN TBL1 MỚI ĐẶT MÓN
-                    </p>
-                    <div className="flex justify-center  text-sm text-gray-600">
-                      <Clock className="mr-2" size={16} />
-                      <p>2 phút trước</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="border-2 border-red-600 rounded-full shadow-md w-fit px-6 py-3 flex items-center ">
-                  <div className="flex flex-col items-start">
-                    <p className="text-red-600 font-semibold text-sm">
-                      BÀN TBL1 MỚI ĐẶT MÓN
-                    </p>
-                    <div className="flex justify-center  text-sm text-gray-600">
-                      <Clock className="mr-2" size={16} />
-                      <p>2 phút trước</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="border-2 border-red-600 rounded-full shadow-md w-fit px-6 py-3 flex items-center ">
-                  <div className="flex flex-col items-start">
-                    <p className="text-red-600 font-semibold text-sm">
-                      BÀN TBL1 MỚI ĐẶT MÓN
-                    </p>
-                    <div className="flex justify-center  text-sm text-gray-600">
-                      <Clock className="mr-2" size={16} />
-                      <p>2 phút trước</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div> */}
         </div>
       </div>
       {selectedDish && (

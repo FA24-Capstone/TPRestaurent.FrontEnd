@@ -8,6 +8,7 @@ import { AccountApi, MapApi } from "../../api/endpoint";
 import _, { debounce } from "lodash";
 import { toast } from "react-toastify";
 import { showError } from "../../util/Utility";
+import { StyledTable } from "../custom-ui/StyledTable";
 
 const AddressModal = ({
   isModalVisible,
@@ -245,7 +246,7 @@ const AddressModal = ({
       ];
 
       return (
-        <Table
+        <StyledTable
           columns={columns}
           dataSource={addresses}
           rowKey="customerInfoAddressId"

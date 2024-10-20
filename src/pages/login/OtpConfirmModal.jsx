@@ -6,6 +6,7 @@ import { author, login } from "../../redux/features/authSlice";
 import useCallApi from "../../api/useCallApi";
 import { AccountApi } from "../../api/endpoint";
 import { showError } from "../../util/Utility";
+import OTP from "antd/es/input/OTP";
 
 const OtpConfirmModal = ({
   visible,
@@ -15,37 +16,36 @@ const OtpConfirmModal = ({
   otpType,
   handleSuccess,
 }) => {
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState("");
   const navigate = useNavigate();
   const { loading, error, callApi } = useCallApi();
-  const handleChange = (value, index) => {
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    // Move focus to the next inputß if value is entered and it's not the last input
-    if (value && index < 5) {
-      document.getElementById(`otp-${index + 1}`).focus();
-    }
+  // const handleChange = (value, index) => {
+  //   const newOtp = [...otp];
+  //   newOtp[index] = value;
+  //   // Move focus to the next inputß if value is entered and it's not the last input
+  //   if (value && index < 5) {
+  //     document.getElementById(`otp-${index + 1}`).focus();
+  //   }
 
-    // Handle clearing the OTP if the last input is deleted
-    if (value === "" && index === 5) {
-      // Clear all OTP inputs
-      setOtp(["", "", "", "", "", ""]);
-      // Move focus to the first input
-      document.getElementById(`otp-0`).focus();
-    } else {
-      // Update the OTP state
-      setOtp(newOtp);
-    }
-  };
+  //   // Handle clearing the OTP if the last input is deleted
+  //   if (value === "" && index === 5) {
+  //     // Clear all OTP inputs
+  //     setOtp(["", "", "", "", "", ""]);
+  //     // Move focus to the first input
+  //     document.getElementById(`otp-0`).focus();
+  //   } else {
+  //     // Update the OTP state
+  //     setOtp(newOtp);
+  //   }
+  // };
   const dispatch = useDispatch();
 
   const handleSubmit = async () => {
-    const otpString = otp.join("");
     switch (otpType) {
       case 0:
         const resposne = await callApi(`/api/account/login`, "POST", {
           phoneNumber: phoneNumber,
-          otpCode: otpString,
+          otpCode: otp,
         });
         if (resposne?.isSuccess) {
           localStorage.setItem("token", resposne?.result?.token);
@@ -63,7 +63,7 @@ const OtpConfirmModal = ({
         const data = await callApi(
           `${
             AccountApi.VERIFY_ACCOUNT_OTP
-          }?phoneNumber=${phoneNumber}&code=${otpString}&otpType=${1}`,
+          }?phoneNumber=${phoneNumber}&code=${otp}&otpType=${1}`,
           "POST"
         );
         if (data?.isSuccess) {
@@ -93,16 +93,7 @@ const OtpConfirmModal = ({
           Vui lòng điền mã OTP được gửi đến số điện thoại của bạn.
         </p>
         <div className="flex justify-center space-x-2 mb-8">
-          {otp.map((digit, index) => (
-            <Input
-              key={index}
-              id={`otp-${index}`}
-              className="w-12 h-12 text-center text-xl border-2 border-[rgb(192,29,46)] rounded-lg focus:border-[rgb(192,29,46)] focus:ring-2 focus:ring-[rgb(192,29,46,0.5)]"
-              value={digit}
-              onChange={(e) => handleChange(e.target.value, index)}
-              maxLength={1}
-            />
-          ))}
+          <OTP value={otp} onChange={setOtp} />
         </div>
         <Button
           onClick={handleSubmit}

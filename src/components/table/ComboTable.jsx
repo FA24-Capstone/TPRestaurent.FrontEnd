@@ -8,6 +8,7 @@ import {
 } from "@ant-design/icons";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { StyledTable } from "../custom-ui/StyledTable";
 
 const ComboTable = ({
   data,
@@ -142,7 +143,7 @@ const ComboTable = ({
       : []),
   ];
   return (
-    <Table
+    <StyledTable
       columns={columns}
       dataSource={data}
       rowKey="comboId"

@@ -255,7 +255,7 @@ const PersonalAddress = () => {
                 <Edit2 size={16} className="text-blue-800" />
               </IconButton>
               <IconButton
-                color="red"
+                className="bg-red-900 text-white"
                 size="sm"
                 onClick={async () => {
                   console.log(
