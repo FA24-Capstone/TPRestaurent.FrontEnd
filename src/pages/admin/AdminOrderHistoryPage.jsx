@@ -289,7 +289,7 @@ export function AdminOrderHistoryPage() {
               </Button>
             </div>
           )}
-          <div className="flex-1">
+          <div className="ml-4 flex-1">
             <StyledTable
               columns={columns}
               dataSource={data}

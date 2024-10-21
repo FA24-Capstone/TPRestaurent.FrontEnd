@@ -6,10 +6,13 @@ export const StyledTable = styled(Table)`
     text-align: center;
     vertical-align: middle;
     border-bottom: none;
+    background-color: #ad0303;
+    color: white
   }
   .ant-table-tbody > tr > td {
     text-align: center;
     vertical-align: middle;
     border-bottom: none;
   }
+
 `;

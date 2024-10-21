@@ -52,6 +52,7 @@ export const OrderApi = {
   CALCULATE_DELIVER_ORDER: "/order/calculate-deliver-order",
   UPDATE_ORDER_DETAIL_STATUS: "/order/update-order-detail-status",
   ASSIGN_ORDER_TO_SHIPPER: "/order/assign-order-for-shipper",
+  GET_ALL_ORDER_BY_SHIPPER: "/order/get-all-order-by-shipper-id",
 };
 
 export const ReservationApi = {
