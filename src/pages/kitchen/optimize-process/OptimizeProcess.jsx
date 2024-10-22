@@ -188,7 +188,7 @@ const OptimizeProcess = () => {
                     <div className="w-full">
                       {loading && <Skeleton />}
                       {!loading && (
-                        <StyledTable
+                        <Table
                           dataSource={mutualOrderDishes}
                           columns={columns}
                           pagination={false}
@@ -209,7 +209,7 @@ const OptimizeProcess = () => {
                 <div className="overflow-x-auto w-full">
                   {loading && <Skeleton />}
                   {!loading && (
-                    <StyledTable
+                    <Table
                       dataSource={singleOrderDishes}
                       columns={columns}
                       pagination={false}

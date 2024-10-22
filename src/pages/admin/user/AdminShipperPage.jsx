@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   List,
-  Card,
   Typography,
   Table,
   Skeleton,
@@ -11,58 +10,20 @@ import {
   Input,
   Tooltip,
 } from "antd";
-import { UserOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import useCallApi from "../../../api/useCallApi";
 import { AccountApi, OrderApi } from "../../../api/endpoint";
-import { StyledTable } from "../../../components/custom-ui/StyledTable";
 import TabMananger from "../../../components/tab/TabManager";
 import Pagination from "../../../components/pagination/Pagination";
-import { render } from "react-dom";
 import { formatDate, formatDateTime, formatPrice } from "../../../util/Utility";
+import { StyledTable } from "../../../components/custom-ui/StyledTable";
+import ReservationDetail from "../../../components/reservation/reservation-detail/ReservationDetail";
+import ModalReservationDetail from "../../../components/reservation/modal/ModalReservationDetail";
+import { set } from "lodash";
 
 const { Title } = Typography;
 
 // Styled Components
-const Container = styled.div`
-  display: flex;
-  height: 100vh;
-  background-color: #f0f2f5;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-  }
-
-  @media (max-width: 767px) {
-    flex-direction: column;
-  }
-`;
-
-const SidebarWrapper = styled.div`
-  @media (min-width: 768px) {
-    width: 30%;
-  }
-
-  @media (max-width: 767px) {
-    width: 100%;
-  }
-
-  padding: 20px;
-  background-color: #ffffff;
-`;
-
-const MainContentWrapper = styled.div`
-  @media (min-width: 768px) {
-    width: 70%;
-  }
-
-  @media (max-width: 767px) {
-    width: 100%;
-  }
-  padding: 20px;
-  background-color: #ffffff;
-`;
-
 const StyledTitle = styled(Title)`
   &.ant-typography {
     color: #ad0303;
@@ -107,18 +68,23 @@ const StyledList = styled(List)`
     }
   }
 `;
+
 const AdminShipperPage = () => {
   const [selectedShipper, setSelectedShipper] = useState(null);
   const [shippers, setShippers] = useState([]);
-  const { callApi, error, loading } = useCallApi();
+  const { callApi, loading } = useCallApi();
   const [deliveryHistory, setDeliveryHistory] = useState([]);
   const [activeTab, setActiveTab] = useState(8);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const totalItems = 10;
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [orderDetail, setOrderDetail] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
   const menuItems = [
     {
       label: "Đang giao",
@@ -140,57 +106,24 @@ const AdminShipperPage = () => {
       dataIndex: "orderId",
       key: "orderId",
       align: "center",
-      render(_, record) {
-        return <>{record.orderId.substring(0, 8)}</>;
-      },
-    },
-    {
-      title: "Ngày đặt",
-      dataIndex: "orderDate",
-      key: "orderDate",
-      align: "center",
-      render: (text) => formatDate(text),
-    },
-    {
-      title: "Thời gian nhận đơn",
-      dataIndex: "assignedTime",
-      key: "assignedTime",
-      align: "center",
-      render: (text) => formatDateTime(text),
-    },
-    {
-      title: "Thời gian bắt đầu giao",
-      dataIndex: "startDeliveringTime",
-      key: "startDeliveringTime",
-      align: "center",
-      render: (text) => formatDateTime(text),
-    },
+      width: 100,
+      fixed: "left",
 
-    {
-      title: "Thời gian giao",
-      dataIndex: "deliveredTime",
-      key: "deliveredTime",
-      align: "center",
-      render: (text) => (text ? formatDateTime(text) : "N/A"),
-    },
-    {
-      title: "Tổng tiền",
-      dataIndex: "totalAmount",
-      key: "totalAmount",
-      align: "center",
-      render: (text) => `${formatPrice(text)} `,
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: ["status", "vietnameseName"],
-      key: "status",
-      align: "center",
+      render: (_, record) => (
+        <span
+          className="hover:cursor-pointer"
+          onClick={() => setSelectedOrder(record.orderId)}
+        >
+          {record.orderId.substring(0, 8)}
+        </span>
+      ),
     },
     {
       title: "Tên khách hàng",
       dataIndex: ["account", "firstName"],
       key: "customerName",
       align: "center",
+      width: 150,
       render: (_, record) =>
         `${record.account.firstName} ${record.account.lastName}`,
     },
@@ -199,41 +132,94 @@ const AdminShipperPage = () => {
       dataIndex: ["account", "phoneNumber"],
       key: "phoneNumber",
       align: "center",
+      width: 120,
     },
     {
       title: "Địa chỉ",
       dataIndex: ["customerInfoAddress", "customerInfoAddressName"],
       key: "address",
       align: "center",
-      width: 80,
-
-      render: (text) => <span>{text}</span>,
+      width: 200,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (text) => (
+        <Tooltip placement="topLeft" title={text}>
+          {text}
+        </Tooltip>
+      ),
     },
     {
       title: "Ghi chú",
       dataIndex: "note",
       key: "note",
       align: "center",
+      width: 120,
     },
+    {
+      title: "Ngày đặt",
+      dataIndex: "orderDate",
+      key: "orderDate",
+      align: "center",
+      width: 120,
+      render: (text) => formatDate(text),
+    },
+    {
+      title: "Thời gian nhận đơn",
+      dataIndex: "assignedTime",
+      key: "assignedTime",
+      align: "center",
+      width: 150,
+      render: (text) => formatDateTime(text),
+    },
+    {
+      title: "Thời gian bắt đầu giao",
+      dataIndex: "startDeliveringTime",
+      key: "startDeliveringTime",
+      align: "center",
+      width: 150,
+      render: (text) => formatDateTime(text),
+    },
+    {
+      title: "Thời gian giao",
+      dataIndex: "deliveredTime",
+      key: "deliveredTime",
+      align: "center",
+      width: 150,
+      render: (text) => (text ? formatDateTime(text) : "N/A"),
+    },
+    {
+      title: "Tổng tiền",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
+      align: "center",
+      width: 120,
+      render: (text) => `${formatPrice(text)} `,
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: ["status", "vietnameseName"],
+      key: "status",
+      align: "center",
+      width: 120,
+    },
+
     {
       title: "Loại đơn",
       dataIndex: ["orderType", "vietnameseName"],
       key: "orderType",
       align: "center",
+      width: 120,
     },
     {
       title: "Tổng khoảng cách giao",
       dataIndex: "totalDistance",
       key: "totalDistance",
       align: "center",
-    },
-    {
-      title: "Giao hàng trong",
-      dataIndex: "totalDuration",
-      key: "totalDuration",
-      align: "center",
+      width: 150,
     },
   ];
+
   const fetchShippers = async () => {
     const result = await callApi(
       `${AccountApi.GET_ACCOUNTS_BY_ROLE_NAME}/shipper/1/100`,
@@ -243,6 +229,7 @@ const AdminShipperPage = () => {
       setShippers(result.result?.items);
     }
   };
+
   const fetchDeliveryHistory = async () => {
     const response = await callApi(
       `${OrderApi.GET_ALL_ORDER_BY_SHIPPER}/${selectedShipper.id}/${currentPage}/${totalItems}?status=${activeTab}`,
@@ -255,12 +242,30 @@ const AdminShipperPage = () => {
       setDeliveryHistory([]);
     }
   };
+
   useEffect(() => {
     fetchShippers();
     if (selectedShipper) {
       fetchDeliveryHistory();
     }
   }, [selectedShipper, currentPage, activeTab]);
+  console.log("selectedOrder", selectedOrder);
+  const fetchOrderDetail = async () => {
+    const response = await callApi(
+      `${OrderApi.GET_DETAIL}/${selectedOrder}`,
+      "GET"
+    );
+    if (response.isSuccess) {
+      setOrderDetail(response.result);
+    }
+  };
+  useEffect(() => {
+    if (selectedOrder) {
+      fetchOrderDetail();
+      setIsModalOpen(true);
+    }
+  }, [selectedOrder]);
+
   return (
     <div className="bg-white w-full p-4">
       <Typography className="text-center uppercase text-xl font-bold text-red-800 my-4 p-4">
@@ -317,7 +322,7 @@ const AdminShipperPage = () => {
             <Empty />
           )}
           {selectedShipper && deliveryHistory.length > 0 && !loading && (
-            <div className="overflow-x-hidden min-w-96">
+            <div className="overflow-auto min-w-96 max-h-[400px]">
               <StyledTable
                 dataSource={deliveryHistory}
                 columns={columns}
@@ -333,6 +338,11 @@ const AdminShipperPage = () => {
           />
         </div>
       </div>
+      <ModalReservationDetail
+        onClose={() => setIsModalOpen(!isModalOpen)}
+        reservation={orderDetail}
+        visible={isModalOpen}
+      />
     </div>
   );
 };

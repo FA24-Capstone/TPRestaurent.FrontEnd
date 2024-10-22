@@ -79,6 +79,8 @@ const DishTable = ({
       dataIndex: "index",
       key: uniqueId(),
       align: "center",
+      fixed: "left",
+
       render: (_, record) => <span>{record.dish.dishId.substring(0, 8)}</span>,
     },
     {
@@ -86,6 +88,8 @@ const DishTable = ({
       dataIndex: "image",
       key: "image",
       align: "center",
+      fixed: "left",
+
       render: (_, record) => (
         <div
           style={{
@@ -113,7 +117,7 @@ const DishTable = ({
       dataIndex: "name",
       key: "name",
       align: "center",
-
+      fixed: "left",
       render: (_, record) => (
         <span className="uppercase">{record.dish.name}</span>
       ),
