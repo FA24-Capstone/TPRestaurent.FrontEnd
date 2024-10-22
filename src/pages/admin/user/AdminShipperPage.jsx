@@ -9,6 +9,7 @@ import {
   Avatar,
   Tag,
   Input,
+  Tooltip,
 } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import styled from "styled-components";
@@ -17,6 +18,8 @@ import { AccountApi, OrderApi } from "../../../api/endpoint";
 import { StyledTable } from "../../../components/custom-ui/StyledTable";
 import TabMananger from "../../../components/tab/TabManager";
 import Pagination from "../../../components/pagination/Pagination";
+import { render } from "react-dom";
+import { formatDate, formatDateTime } from "../../../util/Utility";
 
 const { Title } = Typography;
 
@@ -137,34 +140,38 @@ const AdminShipperPage = () => {
       dataIndex: "orderId",
       key: "orderId",
       align: "center",
+      render(_, record) {
+        return <>{record.orderId.substring(0, 8)}</>;
+      },
     },
     {
       title: "Ngày đặt",
       dataIndex: "orderDate",
       key: "orderDate",
       align: "center",
-      render: (text) => new Date(text).toLocaleString(),
+      render: (text) => formatDate(text),
     },
     {
       title: "Thời gian nhận đơn",
       dataIndex: "assignedTime",
       key: "assignedTime",
       align: "center",
-      render: (text) => new Date(text).toLocaleString(),
+      render: (text) => formatDateTime(text),
     },
     {
       title: "Thời gian bắt đầu giao",
       dataIndex: "startDeliveringTime",
       key: "startDeliveringTime",
       align: "center",
-      render: (text) => new Date(text).toLocaleString(),
+      render: (text) => formatDateTime(text),
     },
+
     {
       title: "Thời gian giao",
       dataIndex: "deliveredTime",
       key: "deliveredTime",
       align: "center",
-      render: (text) => (text ? new Date(text).toLocaleString() : "N/A"),
+      render: (text) => (text ? formatDateTime(text) : "N/A"),
     },
     {
       title: "Tổng tiền",
@@ -198,6 +205,22 @@ const AdminShipperPage = () => {
       dataIndex: ["customerInfoAddress", "customerInfoAddressName"],
       key: "address",
       align: "center",
+      width: 50, // Set the fixed width
+
+      render: (text) => (
+        <Tooltip placement="topLeft" title={text}>
+          <div
+            style={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              width: "100%",
+            }}
+          >
+            {text}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: "Ghi chú",
@@ -252,13 +275,13 @@ const AdminShipperPage = () => {
     }
   }, [selectedShipper, currentPage, activeTab]);
   return (
-    <div className="bg-white">
-      <Typography className="text-center uppercase text-4xl font-bold text-red-800 my-4 p-4">
+    <div className="bg-white w-full p-4">
+      <Typography className="text-center uppercase text-xl font-bold text-red-800 my-4 p-4">
         Quản lý NHÂN VIÊN GIAO HÀNG
       </Typography>
-      <Container>
-        <SidebarWrapper>
-          <StyledTitle level={3}>Danh sách Nhân viên giao hàng</StyledTitle>
+      <div className="grid grid-col-1 md:grid-cols-3 gap-2">
+        <div className="col-span-1 w-full">
+          <StyledTitle level={5}>Danh sách Nhân viên giao hàng</StyledTitle>
           <Input.Search
             className="my-2"
             placeholder="Tìm kiếm..."
@@ -288,10 +311,10 @@ const AdminShipperPage = () => {
               </List.Item>
             )}
           />
-        </SidebarWrapper>
+        </div>
 
-        <MainContentWrapper>
-          <StyledTitle level={3}>
+        <div className="w-full col-span-2">
+          <StyledTitle level={5}>
             {selectedShipper
               ? `Lịch sử giao hàng của ${selectedShipper.firstName} ${selectedShipper.lastName}`.toUpperCase()
               : "Chọn một nhân viên giao hàng để xem lịch sử giao hàng".toUpperCase()}
@@ -307,7 +330,7 @@ const AdminShipperPage = () => {
             <Empty />
           )}
           {selectedShipper && deliveryHistory.length > 0 && !loading && (
-            <div className="overflow-auto max-h-[600px]">
+            <div className="overflow-x-scroll">
               <StyledTable
                 dataSource={deliveryHistory}
                 columns={columns}
@@ -320,8 +343,8 @@ const AdminShipperPage = () => {
             totalPages={totalPages}
             onPageChange={handlePageChange}
           />
-        </MainContentWrapper>
-      </Container>
+        </div>
+      </div>
     </div>
   );
 };
