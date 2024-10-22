@@ -205,22 +205,9 @@ const AdminShipperPage = () => {
       dataIndex: ["customerInfoAddress", "customerInfoAddressName"],
       key: "address",
       align: "center",
-      width: 50, // Set the fixed width
+      width: 80,
 
-      render: (text) => (
-        <Tooltip placement="topLeft" title={text}>
-          <div
-            style={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              width: "100%",
-            }}
-          >
-            {text}
-          </div>
-        </Tooltip>
-      ),
+      render: (text) => <span>{text}</span>,
     },
     {
       title: "Ghi chú",
