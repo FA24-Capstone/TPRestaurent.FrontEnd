@@ -266,8 +266,8 @@ const AdminShipperPage = () => {
       <Typography className="text-center uppercase text-xl font-bold text-red-800 my-4 p-4">
         Quản lý NHÂN VIÊN GIAO HÀNG
       </Typography>
-      <div className="grid grid-col-1 md:grid-cols-3 gap-2">
-        <div className="col-span-1 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-3 md:gap-2">
+        <div className=" md:col-span-1">
           <StyledTitle level={5}>Danh sách Nhân viên giao hàng</StyledTitle>
           <Input.Search
             className="my-2"
@@ -300,7 +300,7 @@ const AdminShipperPage = () => {
           />
         </div>
 
-        <div className="w-full col-span-2">
+        <div className=" md:col-span-2">
           <StyledTitle level={5}>
             {selectedShipper
               ? `Lịch sử giao hàng của ${selectedShipper.firstName} ${selectedShipper.lastName}`.toUpperCase()
@@ -317,11 +317,12 @@ const AdminShipperPage = () => {
             <Empty />
           )}
           {selectedShipper && deliveryHistory.length > 0 && !loading && (
-            <div className="overflow-x-scroll">
+            <div className="overflow-x-hidden min-w-96">
               <StyledTable
                 dataSource={deliveryHistory}
                 columns={columns}
                 pagination={false}
+                scroll={{ x: 400 }}
               />
             </div>
           )}
