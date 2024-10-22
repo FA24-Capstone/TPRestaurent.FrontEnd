@@ -69,15 +69,15 @@ const DishComboCard = ({ dishCombo }) => {
         <p className="mt-4 text-xl text-red-800 font-bold mx-2">
           Giá bán lẻ tổng cộng: &nbsp;
           {dishCombo?.length > 0 &&
-            dishCombo
-              .flat()
-              .reduce(
-                (total, item) =>
-                  total + item.dishSizeDetail?.price * item.quantity,
-                0
-              )
-              .toLocaleString()}{" "}
-          VND
+            formatPrice(
+              dishCombo
+                .flat()
+                .reduce(
+                  (total, item) =>
+                    total + item.dishSizeDetail?.price * item.quantity,
+                  0
+                )
+            )}
         </p>
       </CardBody>
     </Card>

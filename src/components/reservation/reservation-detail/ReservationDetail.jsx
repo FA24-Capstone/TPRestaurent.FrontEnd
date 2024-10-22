@@ -79,7 +79,7 @@ const ReservationDetail = ({ reservationData }) => {
       dataIndex: "price",
       key: "price",
       render: (price) => (
-        <span className="font-medium">{price.toLocaleString()} VND</span>
+        <span className="font-medium">{formatPrice(price)} </span>
       ),
     },
     {

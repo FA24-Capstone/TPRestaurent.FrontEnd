@@ -19,7 +19,7 @@ import { StyledTable } from "../../../components/custom-ui/StyledTable";
 import TabMananger from "../../../components/tab/TabManager";
 import Pagination from "../../../components/pagination/Pagination";
 import { render } from "react-dom";
-import { formatDate, formatDateTime } from "../../../util/Utility";
+import { formatDate, formatDateTime, formatPrice } from "../../../util/Utility";
 
 const { Title } = Typography;
 
@@ -178,7 +178,7 @@ const AdminShipperPage = () => {
       dataIndex: "totalAmount",
       key: "totalAmount",
       align: "center",
-      render: (text) => `${text.toLocaleString()} VND`,
+      render: (text) => `${formatPrice(text)} `,
     },
     {
       title: "Trạng thái",

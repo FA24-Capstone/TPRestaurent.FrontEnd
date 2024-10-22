@@ -9,6 +9,7 @@ import {
 import { useParams } from "react-router-dom";
 import useCallApi from "../../../api/useCallApi";
 import { OrderApi } from "../../../api/endpoint";
+import { formatDate, formatPrice } from "../../../util/Utility";
 
 const OrderDetailView = () => {
   const [orderData, setOrderData] = useState({});
@@ -25,23 +26,6 @@ const OrderDetailView = () => {
     fetchData();
   }, [id]);
   const { order, orderDetails } = orderData;
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString("vi-VN", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(amount);
-  };
 
   return (
     <div className="bg-gray-100 min-h-screen py-8">
@@ -85,7 +69,7 @@ const OrderDetailView = () => {
               <Typography>
                 Tổng tiền:{" "}
                 <span className="font-semibold">
-                  {formatCurrency(order?.totalAmount)}
+                  {formatPrice(order?.totalAmount)}
                 </span>
               </Typography>
               <Typography>
@@ -142,7 +126,7 @@ const OrderDetailView = () => {
                           color="blue-gray"
                           className="font-semibold"
                         >
-                          Giá: {formatCurrency(item.orderDetail?.price)}
+                          Giá: {formatPrice(item.orderDetail?.price)}
                         </Typography>
                       </div>
                       {item.orderDetail?.note && (

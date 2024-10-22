@@ -13,7 +13,7 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { Table } from "antd";
-import { formatDateTime } from "../../util/Utility";
+import { formatDateTime, formatPrice } from "../../util/Utility";
 import useCallApi from "../../api/useCallApi";
 import Pagination from "../../components/pagination/Pagination";
 import TabMananger from "../../components/tab/TabManager";
@@ -91,7 +91,7 @@ export function AdminMealHistoryPage() {
       dataIndex: "totalAmount",
       key: "totalAmount",
       render: (_, record) => (
-        <Typography>{record.order.totalAmount.toLocaleString()} VND</Typography>
+        <Typography>{formatPrice(record.order.totalAmount)} </Typography>
       ),
     },
     {

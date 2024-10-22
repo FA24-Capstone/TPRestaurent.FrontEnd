@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card, Typography, Button } from "@material-tailwind/react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { formatDate } from "../../../util/Utility";
+import { formatDate, formatPrice } from "../../../util/Utility";
 import { useDispatch } from "react-redux";
 import { addCombo } from "../../../redux/features/cartSlice";
 import { message } from "antd";
@@ -117,7 +117,7 @@ const ComboDetail = ({ comboData, handleBack }) => {
             <hr />
             <p className="mb-4">
               <span className="text-red-700 text-2xl">
-                {combo?.price.toLocaleString()} VND
+                {formatPrice(combo?.price)}
               </span>
             </p>
             <div>
@@ -170,7 +170,7 @@ const ComboDetail = ({ comboData, handleBack }) => {
                         variant="tiny"
                         className="text-center text-gray-600"
                       >
-                        Giá: {dish.dishSizeDetail.price.toLocaleString()} VND
+                        Giá: {formatPrice(dish.dishSizeDetail.price)}
                       </Typography>
                     </div>
                   ))}
