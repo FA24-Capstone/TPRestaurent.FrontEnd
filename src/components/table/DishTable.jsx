@@ -1,4 +1,4 @@
-import { Button, Image, Modal, Table, Tag } from "antd";
+import { Button, Image, Modal, Select, Table, Tag } from "antd";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { Tooltip } from "antd";
 import {
@@ -73,6 +73,20 @@ const DishTable = ({
       );
     });
   };
+
+  const handleSelectChange = (value, record) => {
+    if (value === "edit") {
+      navigate(`/admin/create-menu/${record.dish.dishId}`);
+    } else if (value === "delete") {
+      Modal.confirm({
+        title: "Xác nhận xóa món ăn",
+        content: `Bạn có chắc chắn muốn xóa món ăn ${record.dish.name}?`,
+        onOk: () => deleteDish(record.dish.dishId),
+        okText: "Xác nhận",
+        cancelText: "Hủy",
+      });
+    }
+  };
   const columns = [
     {
       title: "STT",
@@ -89,7 +103,7 @@ const DishTable = ({
       key: "image",
       align: "center",
       fixed: "left",
-
+      width: 150,
       render: (_, record) => (
         <div
           style={{
@@ -163,40 +177,38 @@ const DishTable = ({
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      width: 250,
       render: (_, record) => renderTag(record.dishSizeDetails, record.dish),
     },
     ...(isAction
       ? [
           {
             title: "Hành động",
-            dataIndex: "",
+            dataIndex: "action",
             key: "action",
+            width: 140,
             render: (_, record) => (
-              <div className="flex gap-4">
-                <Button
-                  size="sm"
-                  className="bg-white text-blue-800"
-                  onClick={() => {
-                    navigate(`/admin/create-menu/${record.dish.dishId}`);
-                  }}
+              <div className="">
+                <Select
+                  defaultValue="actions"
+                  style={{ width: 120 }}
+                  onChange={(value) => handleSelectChange(value, record)}
                 >
-                  <FaEdit />
-                </Button>
-                <Button
-                  size="sm"
-                  className="bg-white text-red-800"
-                  onClick={() => {
-                    Modal.confirm({
-                      title: "Xác nhận xóa món ăn",
-                      content: `Bạn có chắc chắn muốn xóa món ăn ${record.dish.name}?`,
-                      onOk: () => deleteDish(record.dish.dishId),
-                      okText: "Xác nhận",
-                      cancelText: "Hủy",
-                    });
-                  }}
-                >
-                  <FaTrash />
-                </Button>
+                  <Option value="actions" disabled>
+                    Hành động
+                  </Option>
+                  <Option value="edit">
+                    <div className="flex items-center">
+                      <FaEdit color="blue" />{" "}
+                      <span className="ml-2">Chỉnh sửa</span>
+                    </div>
+                  </Option>
+                  <Option value="delete">
+                    <div className="flex items-center">
+                      <FaTrash color="red" /> <span className="ml-2">Xoá</span>
+                    </div>
+                  </Option>
+                </Select>
               </div>
             ),
           },
