@@ -211,13 +211,6 @@ const AdminShipperPage = () => {
       align: "center",
       width: 120,
     },
-    {
-      title: "Tổng khoảng cách giao",
-      dataIndex: "totalDistance",
-      key: "totalDistance",
-      align: "center",
-      width: 150,
-    },
   ];
 
   const fetchShippers = async () => {

@@ -123,3 +123,7 @@ export const NotificationApi = {
   GET_ALL_NOTIFICATION_BY_USER:
     "/notification/get-all-notification-by-account-id",
 };
+export const GroupedDishCraftApi = {
+  GET_ALL: "/grouped-dish-craft/get-all-grouped-dish",
+  GET_BY_ID: "/grouped-dish-craft/get-grouped-dish-by-id",
+};

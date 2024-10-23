@@ -1,17 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import { Typography, Table, message, Image, Tag, Badge, Skeleton } from "antd";
+import {
+  Typography,
+  Table,
+  message,
+  Image,
+  Tag,
+  Badge,
+  Skeleton,
+  Space,
+} from "antd";
 import useCallApi from "../../../api/useCallApi";
-import { OrderApi, OrderSessionApi } from "../../../api/endpoint";
-import { IconButton } from "@material-tailwind/react";
-import { Clock, Eye } from "lucide-react";
-import { uniqueId } from "lodash";
-import { showError } from "../../../util/Utility";
-import OrderDetailModal from "./OrderDetailModal";
+import { GroupedDishCraftApi, OrderApi } from "../../../api/endpoint";
 import * as signalR from "@microsoft/signalr";
 import { baseUrl } from "../../../api/config/axios";
 import notification_sound from "../../../assets/sound/kitchen.mp3";
 import styled from "styled-components";
+
 const { Title, Text } = Typography;
+
 const StyledTable = styled(Table)`
   .ant-table-thead > tr > th {
     text-align: center;
@@ -25,22 +31,58 @@ const StyledTable = styled(Table)`
   }
 `;
 
+const QuantityBadge = ({ label, count, color }) => (
+  <div className="flex items-center space-x-2">
+    <Badge
+      count={count}
+      showZero
+      className="flex items-center"
+      style={{ backgroundColor: color }}
+    >
+      <Tag color={color} className="px-3 py-1 text-sm font-medium">
+        {label}
+      </Tag>
+    </Badge>
+  </div>
+);
+
+const DishSizeInfo = ({ sizeData }) => (
+  <Space direction="vertical" className="w-full" size="small">
+    {sizeData.map((item, index) => (
+      <div
+        key={index}
+        className="flex items-center gap-4 bg-gray-50 p-2 rounded"
+      >
+        <Text strong className="min-w-[100px]">
+          {item.DishSize.VietnameseName}:
+        </Text>
+        <Space>
+          <QuantityBadge
+            label="Chưa đọc"
+            count={item.UncheckedQuantity}
+            color="#a8181c"
+          />
+          <QuantityBadge
+            label="Đang nấu"
+            count={item.ProcessingQuantity}
+            color="#1890ff"
+          />
+        </Space>
+      </div>
+    ))}
+  </Space>
+);
+
 const OptimizeProcess = () => {
-  const [mutualOrderDishes, setMutualOrderDishes] = useState([]);
-  const [singleOrderDishes, setSingleOrderDishes] = useState([]);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [selectedDish, setSelectedDish] = useState(null);
   const [connection, setConnection] = useState(null);
   const audioRef = useRef(null);
-  const [isUserInteracted, setIsUserInteracted] = useState(false);
-
+  const [groupedDishCraft, setGroupedDishCraft] = useState([]);
   const { callApi, error, loading } = useCallApi();
 
   const fetchData = async () => {
-    const result = await callApi(`${OrderSessionApi.GET_GROUPED_DISH}`, "GET");
+    const result = await callApi(`${GroupedDishCraftApi.GET_ALL}`, "GET");
     if (result.isSuccess) {
-      setMutualOrderDishes(result.result?.mutualOrderDishes);
-      setSingleOrderDishes(result.result?.singleOrderDishes);
+      setGroupedDishCraft(result.result.items);
     }
   };
 
@@ -53,77 +95,83 @@ const OptimizeProcess = () => {
       dataIndex: "id",
       key: "id",
       title: "STT",
+      width: 80,
       render: (_, __, index) => index + 1,
-      align: "center",
     },
     {
       title: "MÓN ĂN",
-      dataIndex: "name",
+      dataIndex: "groupedDishJson",
       key: "name",
-      render: (_, record) => (
-        <p className=" font-semibold uppercase text-sm">{record.dish?.name}</p>
-      ),
-    },
-    {
-      title: "SỐ LƯỢNG",
-      dataIndex: "quantity",
-      key: "quantity",
-      align: "center",
-      width: 250,
-      render: (_, record) => (
-        <div className="">
-          {record.total.map((item, index) => (
-            <div key={index} className=" rounded-lg">
-              <div className="flex space-x-4">
-                <span className="block text-sm font-bold mb-2">
-                  {item.dishSize.vietnameseName}
-                </span>
-                <Badge count={item.uncheckedQuantity} showZero>
-                  <Tag color="green">Chưa đọc</Tag>
-                </Badge>
-                <Badge count={item.processingQuantity} showZero>
-                  <Tag color="green">Đang nấu</Tag>
-                </Badge>
+
+      render: (text) => {
+        const dishes = JSON.parse(text).MutualOrderDishes;
+        return (
+          dishes.length > 0 &&
+          dishes.map((dishItem, index) => (
+            <div
+              key={index}
+              className="flex gap-4 p-4 border-b last:border-b-0 items-center"
+            >
+              <div className="grid grid-cols-2">
+                {/* <Image
+                  src={dishItem.Dish.Image}
+                  width={80}
+                  height={80}
+                  className="object-cover rounded"
+                  preview={false}
+                /> */}
+                {/* <Text strong>{dishItem.Dish.Name}</Text> */}
+              </div>
+
+              <div className="flex flex-col">
+                <DishSizeInfo sizeData={dishItem.Dish?.Total || []} />
               </div>
             </div>
-          ))}
-        </div>
-      ),
-    },
-    {
-      title: "Hành động",
-      dataIndex: "detail",
-      key: "detail",
-      align: "center",
-      width: 50,
-      render: (_, record) => (
-        <div>
-          <IconButton
-            onClick={() => {
-              setSelectedDish(record);
-            }}
-            className="cursor-pointer bg-white shadow-none text-black hover:shadow-none hover:bg-white"
-          >
-            <Eye />
-          </IconButton>
-        </div>
-      ),
+          ))
+        );
+      },
     },
   ];
 
-  const handleUpdateStatus = async () => {
-    const response = await callApi(
-      `${OrderApi.UPDATE_ORDER_DETAIL_STATUS}?isSuccessful=true`,
-      "PUT",
-      selectedRows
-    );
-    if (response.isSuccess) {
-      message.success("Cập nhật trạng thái thành công");
-      await fetchData();
-    } else {
-      showError(error);
-    }
-  };
+  const columnSingle = [
+    {
+      dataIndex: "id",
+      key: "id",
+      title: "STT",
+      width: 80,
+      render: (_, __, index) => index + 1,
+    },
+    {
+      title: "MÓN ĂN",
+      dataIndex: "groupedDishJson",
+      key: "name",
+      render: (text) => {
+        const dishes = JSON.parse(text).SingleOrderDishes;
+        return (
+          dishes.length > 0 &&
+          dishes.map((dishItem, index) => (
+            <div
+              key={index}
+              className="flex gap-4 p-4 border-b last:border-b-0 items-center"
+            >
+              <Image
+                src={dishItem.Dish.Image}
+                width={80}
+                height={80}
+                className="object-cover rounded"
+                preview={false}
+              />
+              <div className="flex flex-col">
+                <Text strong>{dishItem.Dish.Name}</Text>
+                <DishSizeInfo sizeData={dishItem.Dish?.Total || []} />
+              </div>
+            </div>
+          ))
+        );
+      },
+    },
+  ];
+
   useEffect(() => {
     // Create connection
     const newConnection = new signalR.HubConnectionBuilder()
@@ -133,6 +181,7 @@ const OptimizeProcess = () => {
 
     setConnection(newConnection);
   }, []);
+
   useEffect(() => {
     if (connection) {
       // Start the connection
@@ -142,7 +191,7 @@ const OptimizeProcess = () => {
           console.log("Connected to SignalR");
           message.success("Connected to SignalR");
           // Subscribe to SignalR events
-          connection.on("LOAD_ORDER_SESIONS", (data) => {
+          connection.on("LOAD_ORDER_SESIONS", () => {
             fetchData();
             if (audioRef.current) {
               audioRef.current.play().catch((error) => {
@@ -154,13 +203,22 @@ const OptimizeProcess = () => {
         .catch((error) => console.log("Connection failed: ", error));
     }
 
-    // Cleanup on component unmount
     return () => {
       if (connection) {
         connection.stop();
       }
     };
   }, [connection]);
+
+  const filteredData = groupedDishCraft.filter((item) => {
+    const dishes = JSON.parse(item.groupedDishJson).MutualOrderDishes;
+    return dishes.length > 0;
+  });
+
+  const filteredSingleData = groupedDishCraft.filter((item) => {
+    const dishes = JSON.parse(item.groupedDishJson).SingleOrderDishes;
+    return dishes.length > 0;
+  });
 
   return (
     <div className="px-10 bg-white rounded-lg py-4 shadow-lg">
@@ -192,11 +250,10 @@ const OptimizeProcess = () => {
                       {loading && <Skeleton />}
                       {!loading && (
                         <StyledTable
-                          dataSource={mutualOrderDishes}
+                          dataSource={filteredData}
                           columns={columns}
                           pagination={false}
-                          rowKey={uniqueId()}
-                          size="small"
+                          rowKey={(record) => record.id}
                           loading={loading}
                           scroll={{ x: 600 }}
                         />
@@ -213,12 +270,11 @@ const OptimizeProcess = () => {
                   {loading && <Skeleton />}
                   {!loading && (
                     <StyledTable
-                      dataSource={singleOrderDishes}
-                      columns={columns}
+                      dataSource={filteredSingleData}
+                      columns={columnSingle}
                       pagination={false}
-                      rowKey="id"
-                      size="small"
                       scroll={{ x: 600 }}
+                      rowKey={(record) => record.id}
                     />
                   )}
                 </div>
@@ -227,16 +283,6 @@ const OptimizeProcess = () => {
           </div>
         </div>
       </div>
-      {selectedDish && (
-        <OrderDetailModal
-          selectedDish={selectedDish}
-          selectedRows={selectedRows}
-          setSelectedRows={setSelectedRows}
-          handleUpdateStatus={handleUpdateStatus}
-          loading={loading}
-          setSelectedDish={setSelectedDish}
-        />
-      )}
     </div>
   );
 };
