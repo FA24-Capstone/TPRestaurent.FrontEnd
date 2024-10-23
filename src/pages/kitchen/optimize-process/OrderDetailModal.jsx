@@ -18,6 +18,7 @@ import {
 import { uniqueId } from "lodash";
 import { formatDateTime } from "../../../util/Utility";
 import { StyledTable } from "../../../components/custom-ui/StyledTable";
+import TabMananger from "../../../components/tab/TabManager";
 
 const OrderDetailModal = ({
   selectedDish,
@@ -27,16 +28,16 @@ const OrderDetailModal = ({
 }) => {
   console.log(selectedDish);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-
+  const [activeTab, setActiveTab] = useState("0");
   const onSelectChange = (newSelectedRowKeys) => {
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
   const getTotalQuantities = () => {
-    const total = selectedDish?.Total?.reduce(
+    const total = selectedDish?.dish?.total?.reduce(
       (acc, item) => ({
-        unchecked: acc.unchecked + item.UncheckedQuantity,
-        processing: acc.processing + item.ProcessingQuantity,
+        unchecked: acc.unchecked + item.uncheckedQuantity,
+        processing: acc.processing + item.processingQuantity,
       }),
       { unchecked: 0, processing: 0 }
     );
@@ -149,6 +150,18 @@ const OrderDetailModal = ({
     selectedRowKeys,
     onChange: onSelectChange,
   };
+
+  const menuItems = [
+    {
+      label: "Đơn đã xem",
+      value: "0",
+    },
+    {
+      label: "Đơn đang nấu",
+      value: "1",
+    },
+  ];
+  console.log(selectedDish);
   return (
     <Modal
       open={selectedDish}
@@ -205,7 +218,7 @@ const OrderDetailModal = ({
                   Chi tiết theo Size
                 </h3>
                 <div className="space-y-4">
-                  {selectedDish?.total?.map((item, index) => (
+                  {selectedDish?.dish?.total?.map((item, index) => (
                     <div
                       key={index}
                       className="bg-white rounded-lg border border-gray-200 overflow-hidden"
@@ -280,9 +293,19 @@ const OrderDetailModal = ({
 
           {/* Right Side - Orders Table (keep existing code) */}
           <div className="col-span-12 lg:col-span-9">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 max-h-[600px] overflow-y-auto">
+            <TabMananger
+              activeTab={activeTab}
+              items={menuItems}
+              setActiveTab={setActiveTab}
+              enableCount={false}
+            />
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 max-h-[500px] overflow-y-scroll">
               <StyledTable
-                dataSource={selectedDish?.uncheckedDishFromTableOrders}
+                dataSource={
+                  activeTab === "0"
+                    ? selectedDish?.uncheckedDishFromTableOrders
+                    : selectedDish?.processingDishFromTableOrders
+                }
                 columns={orderColumns}
                 scroll={{ x: 800 }}
                 pagination={false}

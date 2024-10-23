@@ -3,7 +3,6 @@ import {
   Typography,
   Table,
   message,
-  Image,
   Tag,
   Badge,
   Skeleton,
@@ -17,6 +16,8 @@ import { baseUrl } from "../../../api/config/axios";
 import notification_sound from "../../../assets/sound/kitchen.mp3";
 import styled from "styled-components";
 import { EyeOutlined } from "@ant-design/icons";
+import OrderDetailModal from "./OrderDetailModal";
+import { showError } from "../../../util/Utility";
 
 const { Title, Text } = Typography;
 
@@ -48,7 +49,13 @@ const QuantityBadge = ({ label, count, color }) => (
   </div>
 );
 
-const DishSizeInfo = ({ sizeData, dishData }) => (
+const DishSizeInfo = ({
+  sizeData,
+  dishData,
+  groupedDishId,
+  fetchDetail,
+  type,
+}) => (
   <div
     className="flex items-center justify-start rounded-lg p-4 my-1"
     style={{
@@ -79,7 +86,12 @@ const DishSizeInfo = ({ sizeData, dishData }) => (
         </div>
       ))}
     </div>
-    <Button className="ml-4">
+    <Button
+      className="ml-4"
+      onClick={async () =>
+        await fetchDetail(groupedDishId, dishData?.Dish.DishId, type)
+      }
+    >
       <EyeOutlined />
     </Button>
   </div>
@@ -90,18 +102,7 @@ const OptimizeProcess = () => {
   const audioRef = useRef(null);
   const [groupedDishCraft, setGroupedDishCraft] = useState([]);
   const { callApi, error, loading } = useCallApi();
-
-  const fetchData = async () => {
-    const result = await callApi(`${GroupedDishCraftApi.GET_ALL}`, "GET");
-    if (result.isSuccess) {
-      setGroupedDishCraft(result.result.items);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
+  const [selectedDish, setSelectedDish] = useState(null);
   const columns = [
     {
       dataIndex: "id",
@@ -116,8 +117,8 @@ const OptimizeProcess = () => {
       dataIndex: "groupedDishJson",
       key: "name",
 
-      render: (text) => {
-        const dishes = JSON.parse(text).MutualOrderDishes;
+      render: (_, record) => {
+        const dishes = JSON.parse(record.groupedDishJson).MutualOrderDishes;
         return (
           dishes.length > 0 &&
           dishes.map((dishItem, index) => (
@@ -125,6 +126,9 @@ const OptimizeProcess = () => {
               key={index}
               dishData={dishItem}
               sizeData={dishItem.Dish?.Total || []}
+              groupedDishId={record.groupedDishCraftId}
+              fetchDetail={fetchDetail}
+              type={true}
             />
           ))
         );
@@ -145,8 +149,8 @@ const OptimizeProcess = () => {
       dataIndex: "groupedDishJson",
       key: "name",
 
-      render: (text) => {
-        const dishes = JSON.parse(text).SingleOrderDishes;
+      render: (_, record) => {
+        const dishes = JSON.parse(record.groupedDishJson).SingleOrderDishes;
         return (
           dishes.length > 0 &&
           dishes.map((dishItem, index) => (
@@ -154,12 +158,48 @@ const OptimizeProcess = () => {
               key={index}
               dishData={dishItem}
               sizeData={dishItem.Dish?.Total || []}
+              groupedDishId={record.groupedDishCraftId}
+              fetchDetail={fetchDetail}
+              type={false}
             />
           ))
         );
       },
     },
   ];
+  const fetchData = async () => {
+    const result = await callApi(`${GroupedDishCraftApi.GET_ALL}`, "GET");
+    if (result.isSuccess) {
+      setGroupedDishCraft(result.result.items);
+    }
+  };
+  const fetchDetail = async (groupedDishId, dishId, type) => {
+    const result = await callApi(
+      `${GroupedDishCraftApi.GET_BY_ID}/${groupedDishId}?dishId=${dishId}&isMutual=${type}`,
+      "GET"
+    );
+    if (result.isSuccess) {
+      setSelectedDish(result.result);
+    }
+  };
+  console.log(selectedDish);
+  const handleUpdateStatus = async (selectedOrderDetail) => {
+    const result = await callApi(
+      `${OrderApi.UPDATE_ORDER_DETAIL_STATUS}`,
+      "PUT",
+      selectedOrderDetail
+    );
+    if (result.isSuccess) {
+      fetchData();
+      setSelectedDish(null);
+      message.success("Cập nhật trạng thái thành công");
+    } else {
+      showError(error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   useEffect(() => {
     // Create connection
@@ -206,7 +246,7 @@ const OptimizeProcess = () => {
     const dishes = JSON.parse(item.groupedDishJson).SingleOrderDishes;
     return dishes.length > 0;
   });
-  console.log(filteredSingleData);
+
   return (
     <div className="px-10 bg-white rounded-lg py-4 shadow-lg">
       <h5 className="text-center text-red-800 font-bold text-2xl">
@@ -224,7 +264,7 @@ const OptimizeProcess = () => {
 
         <Title level={3}>BẢNG ƯU TIÊN MÓN CẦN CHẾ BIẾN</Title>
 
-        <div className="grid grid-cols-2 gap-4 ">
+        <div className="grid  grid-cols-1 xl:grid-cols-2 gap-4 ">
           <div className="">
             <h3 className="bg-[#E3B054] text-white px-4 py-6 text-center rounded-lg shadow-lg uppercase font-bold">
               Món trùng đơn
@@ -263,6 +303,12 @@ const OptimizeProcess = () => {
           </div>
         </div>
       </div>
+      <OrderDetailModal
+        handleUpdateStatus={handleUpdateStatus}
+        loading={loading}
+        selectedDish={selectedDish}
+        setSelectedDish={setSelectedDish}
+      />
     </div>
   );
 };
