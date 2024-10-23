@@ -8,6 +8,7 @@ import {
   Badge,
   Skeleton,
   Space,
+  Button,
 } from "antd";
 import useCallApi from "../../../api/useCallApi";
 import { GroupedDishCraftApi, OrderApi } from "../../../api/endpoint";
@@ -15,6 +16,7 @@ import * as signalR from "@microsoft/signalr";
 import { baseUrl } from "../../../api/config/axios";
 import notification_sound from "../../../assets/sound/kitchen.mp3";
 import styled from "styled-components";
+import { EyeOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
@@ -46,31 +48,41 @@ const QuantityBadge = ({ label, count, color }) => (
   </div>
 );
 
-const DishSizeInfo = ({ sizeData }) => (
-  <Space direction="vertical" className="w-full" size="small">
-    {sizeData.map((item, index) => (
-      <div
-        key={index}
-        className="flex items-center gap-4 bg-gray-50 p-2 rounded"
-      >
-        <Text strong className="min-w-[100px]">
-          {item.DishSize.VietnameseName}:
-        </Text>
-        <Space>
-          <QuantityBadge
-            label="Chưa đọc"
-            count={item.UncheckedQuantity}
-            color="#a8181c"
-          />
-          <QuantityBadge
-            label="Đang nấu"
-            count={item.ProcessingQuantity}
-            color="#1890ff"
-          />
-        </Space>
-      </div>
-    ))}
-  </Space>
+const DishSizeInfo = ({ sizeData, dishData }) => (
+  <div
+    className="flex items-center justify-start rounded-lg p-4 my-1"
+    style={{
+      border: "1px solid #ccc",
+    }}
+  >
+    <Text strong className="w-32">
+      {dishData?.Dish?.Name}
+    </Text>
+    <div>
+      {sizeData.map((item, index) => (
+        <div key={index} className="flex items-center gap-4 p-2 rounded">
+          <Text strong className="min-w-[100px]">
+            {item.DishSize.VietnameseName}:
+          </Text>
+          <Space>
+            <QuantityBadge
+              label="Chưa đọc"
+              count={item.UncheckedQuantity}
+              color="#a8181c"
+            />
+            <QuantityBadge
+              label="Đang nấu"
+              count={item.ProcessingQuantity}
+              color="#1890ff"
+            />
+          </Space>
+        </div>
+      ))}
+    </div>
+    <Button className="ml-4">
+      <EyeOutlined />
+    </Button>
+  </div>
 );
 
 const OptimizeProcess = () => {
@@ -97,6 +109,7 @@ const OptimizeProcess = () => {
       title: "STT",
       width: 80,
       render: (_, __, index) => index + 1,
+      fixed: "left",
     },
     {
       title: "MÓN ĂN",
@@ -108,25 +121,11 @@ const OptimizeProcess = () => {
         return (
           dishes.length > 0 &&
           dishes.map((dishItem, index) => (
-            <div
+            <DishSizeInfo
               key={index}
-              className="flex gap-4 p-4 border-b last:border-b-0 items-center"
-            >
-              <div className="grid grid-cols-2">
-                {/* <Image
-                  src={dishItem.Dish.Image}
-                  width={80}
-                  height={80}
-                  className="object-cover rounded"
-                  preview={false}
-                /> */}
-                {/* <Text strong>{dishItem.Dish.Name}</Text> */}
-              </div>
-
-              <div className="flex flex-col">
-                <DishSizeInfo sizeData={dishItem.Dish?.Total || []} />
-              </div>
-            </div>
+              dishData={dishItem}
+              sizeData={dishItem.Dish?.Total || []}
+            />
           ))
         );
       },
@@ -145,27 +144,17 @@ const OptimizeProcess = () => {
       title: "MÓN ĂN",
       dataIndex: "groupedDishJson",
       key: "name",
+
       render: (text) => {
         const dishes = JSON.parse(text).SingleOrderDishes;
         return (
           dishes.length > 0 &&
           dishes.map((dishItem, index) => (
-            <div
+            <DishSizeInfo
               key={index}
-              className="flex gap-4 p-4 border-b last:border-b-0 items-center"
-            >
-              <Image
-                src={dishItem.Dish.Image}
-                width={80}
-                height={80}
-                className="object-cover rounded"
-                preview={false}
-              />
-              <div className="flex flex-col">
-                <Text strong>{dishItem.Dish.Name}</Text>
-                <DishSizeInfo sizeData={dishItem.Dish?.Total || []} />
-              </div>
-            </div>
+              dishData={dishItem}
+              sizeData={dishItem.Dish?.Total || []}
+            />
           ))
         );
       },
@@ -175,7 +164,7 @@ const OptimizeProcess = () => {
   useEffect(() => {
     // Create connection
     const newConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${baseUrl}/notifications`) // Replace with your SignalR hub URL
+      .withUrl(`${baseUrl}/notifications`)
       .withAutomaticReconnect()
       .build();
 
@@ -194,9 +183,7 @@ const OptimizeProcess = () => {
           connection.on("LOAD_ORDER_SESIONS", () => {
             fetchData();
             if (audioRef.current) {
-              audioRef.current.play().catch((error) => {
-                console.error("Error playing audio:", error);
-              });
+              audioRef.current.play();
             }
           });
         })
@@ -219,7 +206,7 @@ const OptimizeProcess = () => {
     const dishes = JSON.parse(item.groupedDishJson).SingleOrderDishes;
     return dishes.length > 0;
   });
-
+  console.log(filteredSingleData);
   return (
     <div className="px-10 bg-white rounded-lg py-4 shadow-lg">
       <h5 className="text-center text-red-800 font-bold text-2xl">
@@ -237,48 +224,41 @@ const OptimizeProcess = () => {
 
         <Title level={3}>BẢNG ƯU TIÊN MÓN CẦN CHẾ BIẾN</Title>
 
-        <div className="grid grid-cols-1 2xl:grid-cols-12 ">
-          <div className=" col-span-12  2xl:col-span-12 ">
-            <div className="grid  grid-cols-1 xl:grid-cols-2 gap-2">
-              <div className="">
-                <div className="">
-                  <div className="">
-                    <h3 className="bg-[#E3B054] text-white px-4 py-6 text-center rounded-lg shadow-lg uppercase font-bold">
-                      Món trùng đơn
-                    </h3>
-                    <div className="w-full">
-                      {loading && <Skeleton />}
-                      {!loading && (
-                        <StyledTable
-                          dataSource={filteredData}
-                          columns={columns}
-                          pagination={false}
-                          rowKey={(record) => record.id}
-                          loading={loading}
-                          scroll={{ x: 600 }}
-                        />
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="">
-                <h3 className="bg-[#C40519] text-white px-4 py-6 text-center rounded-lg shadow-lg uppercase font-bold">
-                  Món lẻ đơn
-                </h3>
-                <div className="overflow-x-auto w-full">
-                  {loading && <Skeleton />}
-                  {!loading && (
-                    <StyledTable
-                      dataSource={filteredSingleData}
-                      columns={columnSingle}
-                      pagination={false}
-                      scroll={{ x: 600 }}
-                      rowKey={(record) => record.id}
-                    />
-                  )}
-                </div>
-              </div>
+        <div className="grid grid-cols-2 gap-4 ">
+          <div className="">
+            <h3 className="bg-[#E3B054] text-white px-4 py-6 text-center rounded-lg shadow-lg uppercase font-bold">
+              Món trùng đơn
+            </h3>
+            <div className="w-full">
+              {loading && <Skeleton />}
+              {!loading && (
+                <StyledTable
+                  dataSource={filteredData}
+                  columns={columns}
+                  pagination={false}
+                  rowKey={(record) => record.id}
+                  loading={loading}
+                  scroll={{ x: 600 }}
+                />
+              )}
+            </div>
+          </div>
+          <div className="">
+            <h3 className="bg-[#C40519] text-white px-4 py-6 text-center rounded-lg shadow-lg uppercase font-bold">
+              Món lẻ đơn
+            </h3>
+            <div className="overflow-x-auto w-full">
+              {loading && <Skeleton />}
+              {!loading && (
+                <StyledTable
+                  dataSource={filteredSingleData}
+                  columns={columnSingle}
+                  pagination={false}
+                  scroll={{ x: 600 }}
+                  rowKey={(record) => record.id}
+                  size="small"
+                />
+              )}
             </div>
           </div>
         </div>
