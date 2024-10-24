@@ -155,7 +155,9 @@ export function AdminOrderHistoryPage() {
   }
   const fetchOrder = async () => {
     const response = await callApi(
-      `order/get-all-order-by-status/${currentPage}/${totalItems}?status=${activeTab}&orderType=${2}`,
+      `${
+        OrderApi.GET_ALL
+      }/${currentPage}/${totalItems}?status=${activeTab}&orderType=${2}`,
       "GET"
     );
     if (response?.isSuccess) {
