@@ -55,6 +55,8 @@ const DishSizeInfo = ({
   groupedDishId,
   fetchDetail,
   type,
+  setType,
+  setSelectedGroupedDishId,
 }) => (
   <div
     className="flex items-center justify-start rounded-lg p-4 my-1"
@@ -88,9 +90,11 @@ const DishSizeInfo = ({
     </div>
     <Button
       className="ml-4"
-      onClick={async () =>
-        await fetchDetail(groupedDishId, dishData?.Dish.DishId, type)
-      }
+      onClick={async () => {
+        setType(type);
+        setSelectedGroupedDishId(groupedDishId);
+        await fetchDetail(groupedDishId, dishData?.Dish.DishId, type);
+      }}
     >
       <EyeOutlined />
     </Button>
@@ -103,6 +107,8 @@ const OptimizeProcess = () => {
   const [groupedDishCraft, setGroupedDishCraft] = useState([]);
   const { callApi, error, loading } = useCallApi();
   const [selectedDish, setSelectedDish] = useState(null);
+  const [selectedGroupedDishId, setSelectedGroupedDishId] = useState(null);
+  const [type, setType] = useState(true);
   const columns = [
     {
       dataIndex: "id",
@@ -129,6 +135,8 @@ const OptimizeProcess = () => {
               groupedDishId={record.groupedDishCraftId}
               fetchDetail={fetchDetail}
               type={true}
+              setType={setType}
+              setSelectedGroupedDishId={setSelectedGroupedDishId}
             />
           ))
         );
@@ -161,6 +169,8 @@ const OptimizeProcess = () => {
               groupedDishId={record.groupedDishCraftId}
               fetchDetail={fetchDetail}
               type={false}
+              setSelectedGroupedDishId={setSelectedGroupedDishId}
+              setType={setType}
             />
           ))
         );
@@ -182,7 +192,18 @@ const OptimizeProcess = () => {
       setSelectedDish(result.result);
     }
   };
-  console.log(selectedDish);
+  const fetchAfterHandle = async () => {
+    await fetchData();
+    const response = await fetchDetail(
+      selectedGroupedDishId,
+      selectedDish.dish.dishId,
+      type
+    );
+    if (response.isSuccess) {
+      setSelectedDish(response.result);
+    }
+  };
+
   const handleUpdateStatus = async (selectedOrderDetail) => {
     const result = await callApi(
       `${OrderApi.UPDATE_ORDER_DETAIL_STATUS}`,
@@ -190,8 +211,7 @@ const OptimizeProcess = () => {
       selectedOrderDetail
     );
     if (result.isSuccess) {
-      fetchData();
-      setSelectedDish(null);
+      await fetchAfterHandle();
       message.success("Cập nhật trạng thái thành công");
     } else {
       showError(error);

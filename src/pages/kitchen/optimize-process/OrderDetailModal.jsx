@@ -153,7 +153,7 @@ const OrderDetailModal = ({
 
   const menuItems = [
     {
-      label: "Đơn đã xem",
+      label: "Đơn chưa xem",
       value: "0",
     },
     {
@@ -161,7 +161,7 @@ const OrderDetailModal = ({
       value: "1",
     },
   ];
-  console.log(selectedDish);
+  console.log(selectedDish?.uncheckedDishFromTableOrders);
   return (
     <Modal
       open={selectedDish}
@@ -327,11 +327,15 @@ const OrderDetailModal = ({
               {selectedRowKeys.length > 0 && (
                 <div className="flex justify-center py-4 border-t border-gray-100">
                   <Button
-                    onClick={() => handleUpdateStatus(selectedRowKeys)}
+                    onClick={async () =>
+                      await handleUpdateStatus(selectedRowKeys)
+                    }
                     loading={loading}
                     className="h-10 px-8 text-base font-medium bg-red-800 text-white"
                   >
-                    {loading ? "Đang cập nhật..." : "Cập nhật trạng thái"}
+                    {activeTab === "0"
+                      ? "Chuyển sang nấu"
+                      : "Đánh dấu đã hoàn thành"}
                   </Button>
                 </div>
               )}
