@@ -18,6 +18,7 @@ import styled from "styled-components";
 import { EyeOutlined } from "@ant-design/icons";
 import OrderDetailModal from "./OrderDetailModal";
 import { showError } from "../../../util/Utility";
+import { set } from "lodash";
 
 const { Title, Text } = Typography;
 
@@ -109,6 +110,7 @@ const OptimizeProcess = () => {
   const [selectedDish, setSelectedDish] = useState(null);
   const [selectedGroupedDishId, setSelectedGroupedDishId] = useState(null);
   const [type, setType] = useState(true);
+  const [isRefresh, setIsRefresh] = useState(false);
   const columns = [
     {
       dataIndex: "id",
@@ -213,6 +215,7 @@ const OptimizeProcess = () => {
     if (result.isSuccess) {
       await fetchAfterHandle();
       message.success("Cập nhật trạng thái thành công");
+      setIsRefresh(!isRefresh);
     } else {
       showError(error);
     }
@@ -328,6 +331,8 @@ const OptimizeProcess = () => {
         loading={loading}
         selectedDish={selectedDish}
         setSelectedDish={setSelectedDish}
+        isRefresh={isRefresh}
+        handleIsRefresh={() => setIsRefresh(!isRefresh)}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Table,
@@ -25,6 +25,8 @@ const OrderDetailModal = ({
   handleUpdateStatus,
   loading,
   setSelectedDish,
+  isRefresh,
+  handleIsRefresh,
 }) => {
   console.log(selectedDish);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -43,6 +45,12 @@ const OrderDetailModal = ({
     );
     return total || { unchecked: 0, processing: 0 };
   };
+  useEffect(() => {
+    if (isRefresh) {
+      setSelectedRowKeys([]);
+    }
+  }, [isRefresh]);
+
   const getStatusColor = (status) => {
     const colors = {
       1: "yellow",
@@ -161,7 +169,10 @@ const OrderDetailModal = ({
       value: "1",
     },
   ];
-  console.log(selectedDish?.uncheckedDishFromTableOrders);
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    handleIsRefresh();
+  };
   return (
     <Modal
       open={selectedDish}
@@ -296,7 +307,7 @@ const OrderDetailModal = ({
             <TabMananger
               activeTab={activeTab}
               items={menuItems}
-              setActiveTab={setActiveTab}
+              setActiveTab={handleTabChange}
               enableCount={false}
             />
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 max-h-[500px] overflow-y-scroll">
@@ -329,7 +340,6 @@ const OrderDetailModal = ({
                   <Button
                     onClick={async () => {
                       await handleUpdateStatus(selectedRowKeys);
-                      setSelectedRowKeys([]);
                     }}
                     loading={loading}
                     className="h-10 px-8 text-base font-medium bg-red-800 text-white"
