@@ -20,33 +20,9 @@ import { AccountApi, OrderApi } from "../../api/endpoint";
 import OrderTag from "../../components/tag/OrderTag";
 import ModalReservationDetail from "../../components/reservation/modal/ModalReservationDetail";
 import { StyledTable } from "../../components/custom-ui/StyledTable";
+import { OrderStatus } from "../../util/GlobalType";
 
-const TABS = [
-  {
-    label: "Đang chờ thanh toán",
-    value: "4",
-  },
-  {
-    label: "Đang xử lý",
-    value: "5",
-  },
-  {
-    label: "Chuẩn bị giao hàng",
-    value: "6",
-  },
-  {
-    label: "Đang giao hàng",
-    value: "7",
-  },
-  {
-    label: "Hoàn thành",
-    value: "8",
-  },
-  {
-    label: "Huỷ đơn",
-    value: "9",
-  },
-];
+const TABS = OrderStatus.filter((item) => item.value > 3 && item.value < 10);
 
 export function AdminOrderHistoryPage() {
   const [activeTab, setActiveTab] = useState("");

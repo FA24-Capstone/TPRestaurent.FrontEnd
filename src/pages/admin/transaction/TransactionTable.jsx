@@ -11,7 +11,6 @@ const statusMap = {
   0: { text: "Đang xử lý", color: "blue" },
   1: { text: "Thất bại", color: "red" },
   2: { text: "Thành công", color: "green" },
-  3: { text: "Đã áp dụng", color: "purple" },
 };
 
 const transactionTypeMap = {

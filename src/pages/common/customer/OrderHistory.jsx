@@ -24,6 +24,7 @@ import useCallApi from "../../../api/useCallApi";
 import { AccountApi, OrderApi } from "../../../api/endpoint";
 import LoadingOverlay from "../../../components/loading/LoadingOverlay";
 import OrderHistoryList from "../../../components/order-history/OrderHistoryList";
+import { OrderStatus } from "../../../util/GlobalType";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -34,7 +35,7 @@ export function OrderHistory() {
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [reservationStatus, setReservationStatus] = useState("");
-  const [orderStatus, setOrderStatus] = useState("");
+  const [selectedOrderStatus, setselectedOrderStatus] = useState("");
   const [reservations, setReservations] = useState([]);
   const [orders, setOrders] = useState([]);
 
@@ -60,7 +61,7 @@ export function OrderHistory() {
       "GET"
     );
     const orderResponse = await callApi(
-      `${OrderApi.GET_BY_PHONE}/1/10?phoneNumber=${searchPhoneNumber}&status=${orderStatus}&orderType=2`,
+      `${OrderApi.GET_BY_PHONE}/1/10?phoneNumber=${searchPhoneNumber}&status=${selectedOrderStatus}&orderType=2`,
       "GET"
     );
 
@@ -76,7 +77,7 @@ export function OrderHistory() {
     if (phoneNumber) {
       handleSearch(phoneNumber);
     }
-  }, [reservationStatus, orderStatus, tabSelected]);
+  }, [reservationStatus, selectedOrderStatus, tabSelected]);
 
   const updateUrlWithPhoneNumber = (phone) => {
     const searchParams = new URLSearchParams(location.search);
@@ -132,10 +133,16 @@ export function OrderHistory() {
                 onChange={(value) => setReservationStatus(value)}
               >
                 <Option value="">Tất cả</Option>
-                <Option value="1">Đã xếp bàn</Option>
-                <Option value="2">Đã thanh toán cọc</Option>
-                <Option value="3">Đang dùng bữa</Option>
-                <Option value="9">Đã hủy</Option>
+                {OrderStatus.filter(
+                  (item) =>
+                    item.value == 1 ||
+                    item.value == 3 ||
+                    item.value == 2 ||
+                    item.value == 9 ||
+                    item.value == 10
+                ).map((item) => (
+                  <Option value={item.value}>{item.label}</Option>
+                ))}
               </Select>
             </Space>
             {reservations.length > 0 ? (
@@ -147,17 +154,15 @@ export function OrderHistory() {
           <TabPane tab="Lịch sử đơn hàng" key="2">
             <Space className="mb-4">
               <Select
-                value={orderStatus}
+                value={selectedOrderStatus}
                 style={{ width: 200 }}
-                onChange={(value) => setOrderStatus(value)}
+                onChange={(value) => setselectedOrderStatus(value)}
               >
-                <Option value="">Tất cả</Option>
-                <Option value="4">Chờ xác nhận</Option>
-                <Option value="5">Chưa thanh toán</Option>
-                <Option value="6">Chuẩn bị giao hàng</Option>
-                <Option value="7">Đang giao</Option>
-                <Option value="8">Đã nhận hàng</Option>
-                <Option value="9">Đã hủy</Option>
+                {OrderStatus.filter(
+                  (item) => item.value > 3 && item.value < 10
+                ).map((item) => (
+                  <Option value={item.value}>{item.label}</Option>
+                ))}
               </Select>
             </Space>
             <OrderHistoryList orders={orders} key={"orderlist"} />

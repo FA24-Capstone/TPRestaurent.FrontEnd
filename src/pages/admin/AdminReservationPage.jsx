@@ -21,26 +21,11 @@ import OrderTag from "../../components/tag/OrderTag";
 import { OrderApi } from "../../api/endpoint";
 import ModalReservationDetail from "../../components/reservation/modal/ModalReservationDetail";
 import { StyledTable } from "../../components/custom-ui/StyledTable";
+import { OrderStatus } from "../../util/GlobalType";
 
-const TABS = [
-  {
-    label: "Tất cả",
-    value: "0",
-  },
-  {
-    label: "Chờ xác nhận",
-    value: "1",
-  },
-  {
-    label: "Đã thanh toán cọc",
-    value: "2",
-  },
-
-  {
-    label: "Huỷ đơn",
-    value: "10",
-  },
-];
+const TABS = OrderStatus.filter(
+  (item) => item.value == 1 || item.value == 2 || item.value == 10
+);
 
 export function AdminReservationPage() {
   const [activeTab, setActiveTab] = useState("");

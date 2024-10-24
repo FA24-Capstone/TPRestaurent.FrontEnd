@@ -15,29 +15,9 @@ import LoadingOverlay from "../../components/loading/LoadingOverlay";
 import TabMananger from "../../components/tab/TabManager";
 import Pagination from "../../components/pagination/Pagination";
 import { Skeleton } from "antd";
+import { TransactionStatus } from "../../util/GlobalType";
 
-const TABS = [
-  {
-    label: "Tất cả",
-    value: "all",
-  },
-  {
-    label: "Đang xử lý",
-    value: "0",
-  },
-  {
-    label: "Thất bại",
-    value: "1",
-  },
-  {
-    label: "Thành công",
-    value: "2",
-  },
-  {
-    label: "Đã áp dụng",
-    value: "3",
-  },
-];
+const TABS = TransactionStatus;
 
 export function TransactionPage() {
   const [activeTab, setActiveTab] = useState("");

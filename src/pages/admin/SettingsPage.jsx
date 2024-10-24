@@ -15,6 +15,7 @@ import moment from "moment";
 import useCallApi from "../../api/useCallApi";
 import { ConfigurationApi } from "../../api/endpoint";
 import Pagination from "../../components/pagination/Pagination";
+import { StyledTable } from "../../components/custom-ui/StyledTable";
 
 const { Title } = Typography;
 
@@ -72,12 +73,10 @@ const SettingsPage = () => {
       ),
     },
   ];
-  if (loading) {
-    return <Skeleton />;
-  }
+
   return (
     <Card
-      className="max-w-4xl mx-auto my-8"
+      className="max-w-7xl mx-auto my-8"
       title={
         <div>
           <Title level={4} style={{ color: "black", margin: 0 }}>
@@ -86,13 +85,16 @@ const SettingsPage = () => {
         </div>
       }
     >
-      <div className="overflow-y-scroll h-[550px]">
-        <Table
-          columns={columns}
-          dataSource={data}
-          pagination={false}
-          loading={loading}
-        />
+      <div className="overflow-y-scroll h-[650px]">
+        {loading && <Skeleton active />}
+        {!loading && (
+          <StyledTable
+            columns={columns}
+            dataSource={data}
+            pagination={false}
+            loading={loading}
+          />
+        )}
       </div>
       <Pagination
         currentPage={currentPage}

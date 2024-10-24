@@ -21,21 +21,12 @@ import { OrderApi } from "../../api/endpoint";
 import OrderTag from "../../components/tag/OrderTag";
 import ModalReservationDetail from "../../components/reservation/modal/ModalReservationDetail";
 import { StyledTable } from "../../components/custom-ui/StyledTable";
+import { OrderStatus } from "../../util/GlobalType";
 
-const TABS = [
-  {
-    label: "Đang dùng bữa",
-    value: "3",
-  },
-  {
-    label: "Hoàn thành",
-    value: "8",
-  },
-  {
-    label: "Huỷ đơn",
-    value: "9",
-  },
-];
+const TABS = OrderStatus.filter(
+  (item) =>
+    item.value == 3 || item.value == 8 || item.value == 9 || item.value == 10
+);
 
 export function AdminMealHistoryPage() {
   const [activeTab, setActiveTab] = useState("3");
