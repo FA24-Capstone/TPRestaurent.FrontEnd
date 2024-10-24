@@ -15,7 +15,7 @@ import {
   ClockCircleOutlined,
   FieldTimeOutlined,
 } from "@ant-design/icons";
-import { uniqueId } from "lodash";
+import { set, uniqueId } from "lodash";
 import { formatDateTime } from "../../../util/Utility";
 import { StyledTable } from "../../../components/custom-ui/StyledTable";
 import TabMananger from "../../../components/tab/TabManager";
@@ -327,9 +327,10 @@ const OrderDetailModal = ({
               {selectedRowKeys.length > 0 && (
                 <div className="flex justify-center py-4 border-t border-gray-100">
                   <Button
-                    onClick={async () =>
-                      await handleUpdateStatus(selectedRowKeys)
-                    }
+                    onClick={async () => {
+                      await handleUpdateStatus(selectedRowKeys);
+                      setSelectedRowKeys([]);
+                    }}
                     loading={loading}
                     className="h-10 px-8 text-base font-medium bg-red-800 text-white"
                   >

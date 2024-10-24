@@ -1,13 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Card, CardBody } from "@material-tailwind/react";
-import { formatPrice, showError } from "../../../util/Utility";
+import {
+  formatDate,
+  formatDateTime,
+  formatPrice,
+  showError,
+} from "../../../util/Utility";
 import ReservationInformation from "../ReservationInformation";
 import { Button, message, Modal, Typography } from "antd";
 import PaymentMethodSelector from "../../cart/PaymentMethodSelector";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useCallApi from "../../../api/useCallApi";
 import LoadingOverlay from "../../loading/LoadingOverlay";
-import { OrderApi } from "../../../api/endpoint";
+import { ConfigurationApi, OrderApi } from "../../../api/endpoint";
 import { useNavigate } from "react-router-dom";
 import {
   clearCart,
@@ -24,7 +29,7 @@ import MoMo_Logo from "../../../assets/imgs/payment-icon/MoMo_Logo.png";
 import VNpay_Logo from "../../../assets/imgs/payment-icon/VNpay_Logo.png";
 import CartCombosTable from "../../cart/CartCombosTable";
 import { CartSingleTable } from "../../cart/CartSingleTable";
-const OrderSummary = ({ back, data, information }) => {
+const OrderSummary = ({ back, data, information, dateDeposit }) => {
   const cartReservation = useSelector((state) => state.cartReservation);
   const cartCombos = useSelector((state) => state.cart);
   const dispatch = useDispatch();
@@ -144,12 +149,16 @@ const OrderSummary = ({ back, data, information }) => {
               <Typography className="text-base"></Typography>
             </div>
             <div className="flex justify-between items-center my-4">
-              <Typography className="text-[#333333] ">Hạn đặt cọc:</Typography>
+              <Typography className="text-[#333333] ">
+                Hạn đặt cọc: {dateDeposit}
+              </Typography>
               <Typography className="text-base"></Typography>
             </div>
             <p>
               <i className="fas fa-exclamation-circle"></i> Số tiền đặt cọc sẽ
-              được trừ vào bill thanh toán sau khi dùng bữa tại nhà hàng!
+              được trừ vào bill thanh toán sau khi dùng bữa tại nhà hàng!. Nếu
+              sau thời gian này bạn không thanh toán, số tiền đặt cọc sẽ không
+              được hoàn lại.
             </p>
           </CardBody>
         </Card>

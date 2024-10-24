@@ -23,6 +23,7 @@ import useCallApi from "../../api/useCallApi";
 import { AccountApi, OrderApi } from "../../api/endpoint";
 import ModalPolicy from "../policy/PolicyModal";
 import ModalReservationWithoutDish from "./modal/ModalReservationWithoutDish";
+import dayjs from "dayjs";
 const { TextArea } = Input;
 
 const Reservation = () => {
@@ -40,6 +41,7 @@ const Reservation = () => {
   const { loading, callApi, error } = useCallApi();
   const [show, setShow] = useState(false);
   const [showModalWithoutDish, setShowModalWithoutDish] = useState(false);
+
   const handleCloseModalWithoutDish = () => {
     setShowModalWithoutDish(false);
   };
@@ -52,6 +54,10 @@ const Reservation = () => {
       form.setFieldValue("lastName", user.lastName);
       form.setFieldValue("email", user.email);
       form.setFieldValue("phone", user.phoneNumber);
+      form.setFieldValue("isPrivate", false);
+      form.setFieldValue("numberOfPeople", 1);
+      form.setFieldValue("note", "");
+      form.setFieldValue("date", dayjs(momentDate, "DD/MM/YYYY"));
     }
   };
   useEffect(() => {
@@ -297,7 +303,7 @@ const Reservation = () => {
       </>
     );
   }
-
+  const momentDate = moment().format("DD/MM/YYYY");
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 rounded-2xl shadow-2xl">
       <h1 className="text-2xl font-bold uppercase mb-6 text-center">Đặt bàn</h1>
@@ -400,6 +406,8 @@ const Reservation = () => {
                   disabledDate={disabledDate}
                   placeholder="Chọn ngày"
                   disabled={!isValidatePhone}
+                  allowClear
+                  defaultValue={dayjs(momentDate, "DD/MM/YYYY")}
                 />
               </Form.Item>
               <Form.Item

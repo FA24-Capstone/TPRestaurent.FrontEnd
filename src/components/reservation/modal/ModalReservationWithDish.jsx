@@ -15,18 +15,24 @@ import ComboDetail2 from "../../../pages/common/menu-page/ComboDetail";
 
 import {
   formatDate,
+  formatDateTime,
   formatPrice,
   isEmptyObject,
   mergeCartData,
   showError,
 } from "../../../util/Utility";
 import useCallApi from "../../../api/useCallApi";
-import { ComboApi, DishApi, OrderApi } from "../../../api/endpoint";
+import {
+  ComboApi,
+  ConfigurationApi,
+  DishApi,
+  OrderApi,
+} from "../../../api/endpoint";
 import DishCard from "../../dish/DishCard";
 import ComboCard from "../../combo/ComboCard";
 import OrderSummary from "../reservation-list/OrderSummary";
 import LoadingOverlay from "../../loading/LoadingOverlay";
-
+import moment from "moment-timezone";
 const { TabPane } = Tabs;
 
 const ModalReservationWithDish = ({
@@ -60,6 +66,23 @@ const ModalReservationWithDish = ({
 
   const handleNext = () => !isLastStep && setActiveStep((cur) => cur + 1);
   const handlePrev = () => !isFirstStep && setActiveStep((cur) => cur - 1);
+  const [dateDeposit, setDateDeposit] = useState("");
+
+  const fetchRangeDeposit = async () => {
+    debugger;
+    const response = await callApi(
+      `${ConfigurationApi.GET_CONFIG_BY_NAME}/TIME_TO_RESERVATION_WITH_DISHES_LAST`,
+      "GET"
+    );
+    if (response.isSuccess) {
+      let date = moment().tz("Asia/Ho_Chi_Minh");
+      date.add(response.result.currentValue, "hours");
+      const formattedDate = date.format("DD/MM/YYYY HH:mm");
+      setDateDeposit(formattedDate);
+    } else {
+      showError(error);
+    }
+  };
   const caculatorItems = () => {
     let total = 0;
     total += cart?.length;
@@ -106,7 +129,9 @@ const ModalReservationWithDish = ({
   useEffect(() => {
     handleDeposit();
   }, [cartCombo, cart]);
-
+  useEffect(() => {
+    fetchRangeDeposit();
+  }, []);
   const handleAddToCart = (dish, size) => {
     if (!size.isAvailable) {
       message.error("Sản phẩm với size này đã hết hàng");
@@ -331,6 +356,7 @@ const ModalReservationWithDish = ({
               data={dataSend}
               information={information}
               back={() => setIsSummary(false)}
+              dateDeposit={dateDeposit}
             />
           )}
         </div>

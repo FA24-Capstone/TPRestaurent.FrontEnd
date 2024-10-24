@@ -27,6 +27,7 @@ export const ComboApi = {
 
 export const ConfigurationApi = {
   GET_ALL: "/configuration/get-all-config",
+  GET_CONFIG_BY_NAME: "/configuration/get-config-by-name",
 };
 export const CouponApi = {
   GET_ALL: "/coupon/get-available-coupon",
