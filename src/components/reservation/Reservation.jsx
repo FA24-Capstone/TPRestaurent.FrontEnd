@@ -41,7 +41,7 @@ const Reservation = () => {
   const { loading, callApi, error } = useCallApi();
   const [show, setShow] = useState(false);
   const [showModalWithoutDish, setShowModalWithoutDish] = useState(false);
-
+  console.log(endTimeSlots);
   const handleCloseModalWithoutDish = () => {
     setShowModalWithoutDish(false);
   };
@@ -224,7 +224,11 @@ const Reservation = () => {
   const generateEndTimeSlots = (startTime) => {
     const times = generateTimeSlots();
     const startMoment = moment(startTime, "HH:mm");
-    return times.filter((time) => moment(time, "HH:mm").isAfter(startMoment));
+    let arr = times.filter((time) =>
+      moment(time, "HH:mm").isAfter(startMoment)
+    );
+    const shift = arr.shift();
+    return arr.filter((item) => item !== shift);
   };
 
   const timeSlots = generateTimeSlots();
@@ -444,11 +448,13 @@ const Reservation = () => {
                   value={selectedEndTime}
                   disabled={!isValidatePhone}
                 >
-                  {endTimeSlots.map((time) => (
-                    <Select.Option key={time} value={time}>
-                      {time}
-                    </Select.Option>
-                  ))}
+                  {endTimeSlots &&
+                    endTimeSlots.length > 0 &&
+                    endTimeSlots.map((time) => (
+                      <Select.Option key={time} value={time}>
+                        {time}
+                      </Select.Option>
+                    ))}
                 </Select>
               </Form.Item>
             </div>
