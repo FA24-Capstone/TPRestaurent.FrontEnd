@@ -19,7 +19,7 @@ const CreateStoreCreditModal = ({ isOpen, onClose }) => {
   };
   const handleSubmit = async () => {
     const response = await callApi(`${TransactionApi.CREATE_PAYMENT}`, "POST", {
-      storeCreditId: user.storeCreditId,
+      accountId: user.id,
       storeCreditAmount: inputValue,
       paymentMethod: selectedMethod,
     });

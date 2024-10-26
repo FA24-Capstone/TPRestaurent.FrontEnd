@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { MoneyCollectFilled } from "@ant-design/icons";
 import useCallApi from "../../../api/useCallApi";
 import { TransactionApi } from "../../../api/endpoint";
-import { showError } from "../../../util/Utility";
+import { formatPrice, showError } from "../../../util/Utility";
 import StoreCreditHistory from "../../../components/store-credit/StoreCreditHistory";
 import CreateStoreCreditModal from "../../../components/store-credit/CreateStoreCreditModal";
 
@@ -107,7 +107,7 @@ const PersonalTransaction = () => {
                 <span>Số dư tài khoản</span>
               </div>
               <span className="text-white text-2xl font-bold">
-                {user.storeCredit.toLocaleString()}
+                {formatPrice(user.amount)}
               </span>
             </div>
           </div>
