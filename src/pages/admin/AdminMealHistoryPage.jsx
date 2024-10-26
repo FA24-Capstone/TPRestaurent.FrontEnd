@@ -22,10 +22,8 @@ import OrderTag from "../../components/tag/OrderTag";
 import ModalReservationDetail from "../../components/reservation/modal/ModalReservationDetail";
 import { StyledTable } from "../../components/custom-ui/StyledTable";
 import { OrderStatus } from "../../util/GlobalType";
-import moment from "moment/moment";
 import dayjs from "dayjs";
 import LoadingOverlay from "../../components/loading/LoadingOverlay";
-import Icon from "@ant-design/icons";
 const { RangePicker } = DatePicker;
 
 const TABS = OrderStatus.filter(
@@ -119,7 +117,7 @@ export function AdminMealHistoryPage() {
       dataIndex: "orderId",
       key: "orderId",
       render: (_, record) => (
-        <Typography>{record.order.orderId.substring(0, 8)}</Typography>
+        <Typography>{record.orderId.substring(0, 8)}</Typography>
       ),
     },
     {
@@ -127,45 +125,33 @@ export function AdminMealHistoryPage() {
       dataIndex: "tableName",
       key: "tableName",
       render: (_, record) => (
-        <Typography>{`${record.table.tableName} `}</Typography>
+        <>
+          {record.tables.map((table) => (
+            <Typography>{table.table?.tableName}</Typography>
+          ))}
+        </>
       ),
-    },
-    {
-      title: "Loại bàn",
-      dataIndex: "tableSize",
-      key: "tableSize",
-      render: (_, record) => (
-        <Typography>
-          {`Bàn ${record.table.tableSize.vietnameseName} người`}
-        </Typography>
-      ),
-    },
-    {
-      title: "Loại phòng",
-      dataIndex: "room",
-      key: "room",
-      render: (_, record) => <Typography>{record.table.room.name}</Typography>,
     },
     {
       title: "Tổng tiền",
       dataIndex: "totalAmount",
       key: "totalAmount",
       render: (_, record) => (
-        <Typography>{formatPrice(record.order.totalAmount)} </Typography>
+        <Typography>{formatPrice(record?.totalAmount)} </Typography>
       ),
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      render: (_, record) => <OrderTag orderStatusId={record.order.statusId} />,
+      render: (_, record) => <OrderTag orderStatusId={record?.statusId} />,
     },
     {
       title: "Ngày dùng bữa",
       dataIndex: "mealTime",
       key: "mealTime",
       render: (_, record) => (
-        <Typography>{formatDateTime(record.order.mealTime)}</Typography>
+        <Typography>{formatDateTime(record?.mealTime)}</Typography>
       ),
     },
     {
@@ -176,7 +162,7 @@ export function AdminMealHistoryPage() {
         <Tooltip content="Xem chi tiết">
           <IconButton
             variant="text"
-            onClick={() => fetchOrderDetail(record.order.orderId)}
+            onClick={() => fetchOrderDetail(record.orderId)}
           >
             <EyeIcon className="h-4 w-4" />
           </IconButton>
