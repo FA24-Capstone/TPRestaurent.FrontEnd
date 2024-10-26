@@ -27,10 +27,10 @@ const OrderStatus = [
     icon: <DollarCircleOutlined />,
   },
   {
-    label: "Đã xử lý xong",
+    label: "Đã lên hết món",
     value: 3,
     color: "geekblue",
-    text: "Đã nấu xong",
+    text: "Đã lên hết món",
     icon: <CoffeeOutlined />,
   },
   {

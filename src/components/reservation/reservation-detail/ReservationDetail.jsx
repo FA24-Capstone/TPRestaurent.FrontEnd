@@ -6,6 +6,7 @@ import Momo_logo from "../../../assets/imgs/payment-icon/MoMo_Logo.png";
 import VNPAY_logo from "../../../assets/imgs/payment-icon/VNpay_Logo.png";
 import { PaymentMethod } from "../../../util/GlobalType";
 import { formatDateTime, formatPrice } from "../../../util/Utility";
+import { StyledTable } from "../../custom-ui/StyledTable";
 
 const ReservationDetail = ({ reservationData }) => {
   const { order, orderDishes, orderTables } = reservationData;
@@ -290,7 +291,7 @@ const ReservationDetail = ({ reservationData }) => {
         >
           Chi Tiết Đơn Hàng
         </Typography>
-        <Table
+        <StyledTable
           columns={columns}
           dataSource={dataSource}
           pagination={false}

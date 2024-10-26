@@ -13,7 +13,7 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { formatDateTime, formatPrice } from "../../util/Utility";
-import { Table } from "antd";
+import { Calendar, DatePicker, Table } from "antd";
 import Pagination from "../../components/pagination/Pagination";
 import useCallApi from "../../api/useCallApi";
 import TabMananger from "../../components/tab/TabManager";
@@ -22,6 +22,9 @@ import { OrderApi } from "../../api/endpoint";
 import ModalReservationDetail from "../../components/reservation/modal/ModalReservationDetail";
 import { StyledTable } from "../../components/custom-ui/StyledTable";
 import { OrderStatus } from "../../util/GlobalType";
+import dayjs from "dayjs";
+import { configCalendar } from "./AdminMealHistoryPage";
+const { RangePicker } = DatePicker;
 
 const TABS = OrderStatus.filter(
   (item) => item.value == 1 || item.value == 2 || item.value == 10
@@ -39,15 +42,35 @@ export function AdminReservationPage() {
   const totalItems = 10;
   const [orderDetail, setOrderDetail] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [selectedRange, setSelectedRange] = useState([dayjs(), dayjs()]);
+  const [showCalendar, setShowCalendar] = useState(true);
+  const handleRangeChange = (dates) => {
+    setSelectedRange(dates);
+  };
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+  const toggleCalendar = () => {
+    setShowCalendar(!showCalendar);
+  };
   const handleCurrentPageChange = (page) => {
     setCurrentPage(page);
   };
   const fetchReservations = async () => {
     const response = await callApi(
-      `${
-        OrderApi.GET_ALL
-      }/${currentPage}/${totalItems}?status=${activeTab}&orderType=${1}`,
-      "GET"
+      `${OrderApi.GET_ORDER_WITH_FILTER}`,
+      "POST",
+      {
+        startDate:
+          selectedRange[0].format("YYYY-MM-DD") ||
+          selectedDate.format("YYYY-MM-DD"),
+        endDate:
+          selectedRange[1].format("YYYY-MM-DD") ||
+          selectedDate.format("YYYY-MM-DD"),
+        status: activeTab || undefined,
+        type: 1,
+      }
     );
     if (response?.isSuccess) {
       setReservations(response?.result?.items);
@@ -57,7 +80,7 @@ export function AdminReservationPage() {
 
   useEffect(() => {
     fetchReservations();
-  }, [activeTab, currentPage]);
+  }, [activeTab, currentPage, selectedDate, selectedRange]);
 
   const fetchOrderDetail = async (id) => {
     const response = await callApi(`${OrderApi.GET_DETAIL}/${id}`, "GET");
@@ -89,7 +112,9 @@ export function AdminReservationPage() {
       dataIndex: "totalAmount",
       key: "totalAmount",
       render: (_, record) => (
-        <Typography>{formatPrice(record.totalAmount)} </Typography>
+        <Typography>
+          {formatPrice(record.totalAmount || record.deposit)}
+        </Typography>
       ),
     },
     {
@@ -146,9 +171,6 @@ export function AdminReservationPage() {
             </Typography>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Button variant="outlined" size="sm">
-              Xuất báo cáo
-            </Button>
             <Button
               className="flex items-center bg-red-700 gap-3"
               size="sm"
@@ -158,32 +180,57 @@ export function AdminReservationPage() {
             </Button>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <div className="mb-4">
-            <TabMananger
-              items={TABS}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          </div>
-          <div className="w-full md:w-72">
-            <Input
-              label="Tìm kiếm"
-              icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
       </CardHeader>
-      <CardBody className="overflow-auto h-[550px]">
-        <StyledTable
-          columns={columns}
-          dataSource={reservations}
-          rowKey="reservationId"
-          pagination={false}
-          loading={loading}
-        />
+      <CardBody className="grid grid-cols-3 max-h-[650px] overflow-y-scroll gap-2">
+        <div className="col-span-1  overflow-auto">
+          <Typography className="text-red-800 uppercase font-semibold">
+            Chọn khoảng thời gian
+          </Typography>
+
+          <div className="flex justify-end">
+            {!showCalendar && (
+              <RangePicker
+                locale={configCalendar}
+                onChange={handleRangeChange}
+                className="mt-4 w-full"
+                format={"DD-MM-YYYY"}
+                value={selectedRange}
+              />
+            )}
+            <Button
+              onClick={toggleCalendar}
+              className="mt-4 bg-red-800 text-white ml-4 my-2"
+            >
+              {showCalendar ? "Ẩn lịch" : "Hiển thị lịch"}
+            </Button>
+          </div>
+
+          {showCalendar && (
+            <div className="max-h-[500px] overflow-y-auto">
+              <Calendar
+                locale={configCalendar}
+                value={selectedDate}
+                className="mt-4"
+                onChange={handleDateChange}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="col-span-2">
+          <TabMananger
+            items={TABS}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
+          <StyledTable
+            columns={columns}
+            dataSource={reservations}
+            rowKey="reservationId"
+            pagination={false}
+            loading={loading}
+          />
+        </div>
       </CardBody>
       <Pagination
         currentPage={currentPage}

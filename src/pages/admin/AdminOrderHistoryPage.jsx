@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { message, Table, Checkbox, Select } from "antd";
+import { message, Table, Checkbox, Select, DatePicker, Calendar } from "antd";
 import { formatDateTime, formatPrice, showError } from "../../util/Utility";
 import useCallApi from "../../api/useCallApi";
 import Pagination from "../../components/pagination/Pagination";
@@ -21,8 +21,11 @@ import OrderTag from "../../components/tag/OrderTag";
 import ModalReservationDetail from "../../components/reservation/modal/ModalReservationDetail";
 import { StyledTable } from "../../components/custom-ui/StyledTable";
 import { OrderStatus } from "../../util/GlobalType";
+import dayjs from "dayjs";
+import { configCalendar } from "./AdminMealHistoryPage";
 
 const TABS = OrderStatus.filter((item) => item.value > 3 && item.value < 10);
+const { RangePicker } = DatePicker;
 
 export function AdminOrderHistoryPage() {
   const [activeTab, setActiveTab] = useState("");
@@ -38,7 +41,18 @@ export function AdminOrderHistoryPage() {
   const [shipperAvailable, setShipperAvailable] = useState([]);
   const [selectedShipper, setSelectedShipper] = useState(null);
   const [selectedOrders, setSelectedOrders] = useState([]);
-
+  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [selectedRange, setSelectedRange] = useState([dayjs(), dayjs()]);
+  const [showCalendar, setShowCalendar] = useState(true);
+  const handleRangeChange = (dates) => {
+    setSelectedRange(dates);
+  };
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+  const toggleCalendar = () => {
+    setShowCalendar(!showCalendar);
+  };
   const handleCurrentPageChange = (page) => {
     setCurrentPage(page);
   };
@@ -139,7 +153,7 @@ export function AdminOrderHistoryPage() {
       ),
     },
   ];
-  if (activeTab === "6") {
+  if (activeTab === 6) {
     columns.unshift({
       title: "Chọn",
       key: "select",
@@ -153,10 +167,32 @@ export function AdminOrderHistoryPage() {
       ),
     });
   }
+  if ([7, 8, 9].includes(activeTab)) {
+    columns.splice(columns.length - 1, 0, {
+      title: "Shipper",
+      dataIndex: "shipper",
+      key: "shipper",
+      render: (_, record) => (
+        <Typography>
+          {record.shipper?.firstName} {record.shipper?.lastName}
+        </Typography>
+      ),
+    });
+  }
   const fetchOrder = async () => {
     const response = await callApi(
-      `order/get-all-order-by-status/${currentPage}/${totalItems}?status=${activeTab}&orderType=${2}`,
-      "GET"
+      `${OrderApi.GET_ORDER_WITH_FILTER}`,
+      "POST",
+      {
+        startDate:
+          selectedRange[0].format("YYYY-MM-DD") ||
+          selectedDate.format("YYYY-MM-DD"),
+        endDate:
+          selectedRange[1].format("YYYY-MM-DD") ||
+          selectedDate.format("YYYY-MM-DD"),
+        status: activeTab || undefined,
+        type: 2,
+      }
     );
     if (response?.isSuccess) {
       setData(response?.result?.items);
@@ -166,10 +202,10 @@ export function AdminOrderHistoryPage() {
 
   useEffect(() => {
     fetchOrder();
-    if (activeTab === "6") {
+    if (activeTab === 6) {
       fetchShipperAvailable();
     }
-  }, [activeTab, currentPage]);
+  }, [activeTab, currentPage, selectedShipper, selectedDate, selectedRange]);
 
   const fetchOrderDetail = async (orderId) => {
     const response = await callApi(`${OrderApi.GET_DETAIL}/${orderId}`, "GET");
@@ -216,7 +252,77 @@ export function AdminOrderHistoryPage() {
               </Button>
             </div>
           </div>
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+        </CardHeader>
+        <CardBody className="grid grid-cols-3 gap-2">
+          <div className="col-span-1  overflow-auto">
+            {activeTab !== 6 && (
+              <>
+                <Typography className="text-red-800 uppercase font-semibold">
+                  Chọn khoảng thời gian
+                </Typography>
+
+                <div className="flex justify-end">
+                  {!showCalendar && (
+                    <RangePicker
+                      locale={configCalendar}
+                      onChange={handleRangeChange}
+                      className="mt-4 w-full"
+                      format={"DD-MM-YYYY"}
+                      value={selectedRange}
+                    />
+                  )}
+                  <Button
+                    onClick={toggleCalendar}
+                    className="mt-4 bg-red-800 text-white ml-4 my-2"
+                  >
+                    {showCalendar ? "Ẩn lịch" : "Hiển thị lịch"}
+                  </Button>
+                </div>
+
+                {showCalendar && (
+                  <div className="max-h-[500px] overflow-y-auto">
+                    <Calendar
+                      locale={configCalendar}
+                      value={selectedDate}
+                      className="mt-4"
+                      onChange={handleDateChange}
+                    />
+                  </div>
+                )}
+              </>
+            )}
+
+            {activeTab === 6 && (
+              <div className="flex flex-col mb-4">
+                <Typography
+                  variant="h6"
+                  color="blue-gray"
+                  className="uppercase text-red-800 text-xl my-4"
+                >
+                  Chọn shipper để giao hàng
+                </Typography>
+                <Select
+                  value={selectedShipper}
+                  onChange={(value) => setSelectedShipper(value)}
+                  className="mb-4"
+                >
+                  {shipperAvailable.map((shipper) => (
+                    <Option key={shipper.id} value={shipper.id}>
+                      {shipper.firstName} {shipper.lastName}
+                    </Option>
+                  ))}
+                </Select>
+                <Button
+                  className="bg-red-700 text-white"
+                  onClick={handleSubmitShipper}
+                >
+                  Xác nhận shipper
+                </Button>
+              </div>
+            )}
+          </div>
+
+          <div className="col-span-2">
             <div className="mb-4">
               <TabMananger
                 items={TABS}
@@ -224,48 +330,6 @@ export function AdminOrderHistoryPage() {
                 setActiveTab={setActiveTab}
               />
             </div>
-            <div className="w-full md:w-72">
-              <Input
-                label="Tìm kiếm"
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </div>
-        </CardHeader>
-        <CardBody
-          className={activeTab ? "flex" : `block overflow-auto h-[550px]`}
-        >
-          {activeTab === "6" && (
-            <div className="flex flex-col mb-4">
-              <Typography
-                variant="h6"
-                color="blue-gray"
-                className="uppercase text-red-800 text-xl my-4"
-              >
-                Chọn shipper để giao hàng
-              </Typography>
-              <Select
-                value={selectedShipper}
-                onChange={(value) => setSelectedShipper(value)}
-                className="mb-4"
-              >
-                {shipperAvailable.map((shipper) => (
-                  <Option key={shipper.id} value={shipper.id}>
-                    {shipper.firstName} {shipper.lastName}
-                  </Option>
-                ))}
-              </Select>
-              <Button
-                className="bg-red-700 text-white"
-                onClick={handleSubmitShipper}
-              >
-                Xác nhận shipper
-              </Button>
-            </div>
-          )}
-          <div className="ml-4 flex-1">
             <StyledTable
               columns={columns}
               dataSource={data}

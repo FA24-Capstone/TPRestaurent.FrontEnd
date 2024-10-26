@@ -20,6 +20,7 @@ import { StyledTable } from "../../../components/custom-ui/StyledTable";
 import ReservationDetail from "../../../components/reservation/reservation-detail/ReservationDetail";
 import ModalReservationDetail from "../../../components/reservation/modal/ModalReservationDetail";
 import { set } from "lodash";
+import { OrderStatus } from "../../../util/GlobalType";
 
 const { Title } = Typography;
 
@@ -85,20 +86,13 @@ const AdminShipperPage = () => {
     setCurrentPage(page);
   };
 
-  const menuItems = [
-    {
-      label: "Đang giao",
-      value: "8",
-    },
-    {
-      label: "Đã giao",
-      value: "9",
-    },
-    {
-      label: "Đã hủy",
-      value: "10",
-    },
-  ];
+  const menuItems = OrderStatus.filter(
+    (item) =>
+      item.value === 7 ||
+      item.value === 8 ||
+      item.value === 9 ||
+      item.value === 10
+  );
 
   const columns = [
     {

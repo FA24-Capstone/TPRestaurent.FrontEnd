@@ -54,6 +54,7 @@ export const OrderApi = {
   UPDATE_ORDER_DETAIL_STATUS: "/order/update-order-detail-status",
   ASSIGN_ORDER_TO_SHIPPER: "/order/assign-order-for-shipper",
   GET_ALL_ORDER_BY_SHIPPER: "/order/get-all-order-by-shipper-id",
+  GET_ORDER_WITH_FILTER: "/order/get-order-with-filter",
 };
 
 export const ReservationApi = {
@@ -127,4 +128,11 @@ export const NotificationApi = {
 export const GroupedDishCraftApi = {
   GET_ALL: "/grouped-dish-craft/get-all-grouped-dish",
   GET_BY_ID: "/grouped-dish-craft/get-grouped-dish-by-id",
+};
+export const TableApi = {
+  GET_ALL: "/table/get-all-table",
+  GET_BY_ID: "/table/get-table-by-id",
+  CREATE_TABLE: "/table/create-table",
+  UPDATE_TABLE: "/table/update-table",
+  DELETE_TABLE: "/table/delete-table",
 };
