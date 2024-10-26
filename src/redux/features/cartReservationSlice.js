@@ -1,10 +1,15 @@
 // src/features/cartReservationSlice.js
 import { createSlice, createSelector } from "@reduxjs/toolkit";
+import { set } from "lodash";
 
 const cartReservationSlice = createSlice({
   name: "cartReservation",
   initialState: [],
   reducers: {
+    setCart: (state, action) => {
+      state = action.payload;
+      return state;
+    },
     addToCart: (state, action) => {
       const { dish, size, note } = action.payload;
       const existingItem = state.find(
@@ -88,6 +93,7 @@ export const {
   decreaseQuantity,
   clearCart,
   editNote,
+  setCart,
 } = cartReservationSlice.actions;
 
 export default cartReservationSlice.reducer;

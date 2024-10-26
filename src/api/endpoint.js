@@ -55,6 +55,8 @@ export const OrderApi = {
   ASSIGN_ORDER_TO_SHIPPER: "/order/assign-order-for-shipper",
   GET_ALL_ORDER_BY_SHIPPER: "/order/get-all-order-by-shipper-id",
   GET_ORDER_WITH_FILTER: "/order/get-order-with-filter",
+  GET_CART_COMBO_ITEM: "/order/get-cart-combo-item",
+  GET_CART_DISH_ITEM: "/order/get-cart-dish-item",
 };
 
 export const ReservationApi = {

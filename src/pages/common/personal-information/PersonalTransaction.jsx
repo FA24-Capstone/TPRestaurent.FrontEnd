@@ -40,6 +40,7 @@ const PersonalTransaction = () => {
       }
     }
   };
+
   useEffect(() => {
     fetchData();
   }, [activeTab]);

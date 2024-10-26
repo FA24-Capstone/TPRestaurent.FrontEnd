@@ -11,6 +11,10 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    setCartCombo: (state, action) => {
+      state.items = action.payload;
+      state.total = calculateTotal(state.items);
+    },
     addCombo: (state, action) => {
       const newCombo = action.payload;
       const existingComboIndex = state.items.findIndex(
@@ -105,5 +109,6 @@ export const {
   increaseComboQuantity,
   decreaseComboQuantity,
   editComboNote,
+  setCartCombo,
 } = cartSlice.actions;
 export default cartSlice.reducer;

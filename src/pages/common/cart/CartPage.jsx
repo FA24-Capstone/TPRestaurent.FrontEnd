@@ -1,7 +1,10 @@
 import { Button, message, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { formatPrice, isEmptyObject } from "../../../util/Utility";
-import { getTotal } from "../../../redux/features/cartReservationSlice";
+import {
+  getTotal,
+  setCart,
+} from "../../../redux/features/cartReservationSlice";
 import {
   removeCombo,
   increaseComboQuantity,
@@ -9,19 +12,41 @@ import {
 } from "../../../redux/features/cartSlice";
 import CartCombosTable from "../../../components/cart/CartCombosTable";
 import { CartSingleTable } from "../../../components/cart/CartSingleTable.jsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import CartSummary from "../../../components/cart/CartSummary.jsx";
+import useCallApi from "../../../api/useCallApi.js";
+import { OrderApi } from "../../../api/endpoint.js";
 
 const CartPage = () => {
   const cartReservation = useSelector((state) => state.cartReservation);
+  const cart = useSelector((state) => state.cart);
   const user = useSelector((state) => state.user.user || {});
   const [isSummary, setIsSummary] = useState(false);
-  const cart = useSelector((state) => state.cart);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cartTotal = useSelector(getTotal);
+  const { callApi, error, loading } = useCallApi();
+
+  const syncCart = async () => {
+    const resposeSyncCartReservation = await callApi(
+      `${OrderApi.GET_CART_DISH_ITEM}`,
+      "POST",
+      cartReservation
+    );
+    if (resposeSyncCartReservation.isSuccess) {
+      dispatch(setCart(resposeSyncCartReservation.result));
+    }
+    const resposeSyncCartCombo = await callApi(
+      `${OrderApi.GET_CART_COMBO_ITEM}`,
+      "POST",
+      cart
+    );
+    if (resposeSyncCartCombo.isSuccess) {
+      dispatch(setCart(resposeSyncCartCombo.result));
+    }
+  };
 
   const handleDecreaseComboQuantity = (comboId, selectedDishes) => {
     dispatch(decreaseComboQuantity({ comboId, selectedDishes }));
@@ -46,7 +71,9 @@ const CartPage = () => {
     return <CartSummary handleClose={() => setIsSummary(false)} />;
   }
   const totalPrice = cart.total ? cart.total + (cartTotal || 0) : cartTotal;
-
+  useEffect(() => {
+    syncCart();
+  }, [cartReservation, cart]);
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
