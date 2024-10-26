@@ -194,6 +194,7 @@ export function AdminMealHistoryPage() {
           selectedDate.format("YYYY-MM-DD"),
         status: Number(activeTab) || undefined,
         type: selectedOrderType,
+        tableId: selectedTable,
       }
     );
     if (response?.isSuccess) {
