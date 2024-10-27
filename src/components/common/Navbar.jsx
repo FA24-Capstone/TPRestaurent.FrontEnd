@@ -8,7 +8,7 @@ import { isEmptyObject } from "../../util/Utility";
 import { FaUser } from "react-icons/fa";
 import NotificationDemo from "../notification/NotificationDemo";
 import { logout } from "../../redux/features/authSlice";
-import { Search } from "lucide-react";
+import { Search, SearchIcon } from "lucide-react";
 import useCallApi from "../../api/useCallApi";
 import { NotificationApi } from "../../api/endpoint";
 
@@ -223,12 +223,11 @@ export const Navbar = () => {
                       className="w-full h-full focus:outline-none text-black px-4 py-2 text-lg"
                     />
                     <Button
-                      size="lg"
                       type="submit"
-                      className="sm:w-auto bg-red-700 hover:bg-red-600 transition-all duration-300 text-nowrap"
+                      className="sm:w-auto bg-red-900 hover:bg-red-600 transition-all duration-300 text-nowrap rounded-full"
                       onClick={handleSearch}
                     >
-                      Tra cứu
+                      <SearchIcon />
                     </Button>
                   </form>
                 </div>

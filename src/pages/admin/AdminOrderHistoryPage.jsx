@@ -184,12 +184,12 @@ export function AdminOrderHistoryPage() {
       `${OrderApi.GET_ORDER_WITH_FILTER}`,
       "POST",
       {
-        startDate:
-          selectedRange[0].format("YYYY-MM-DD") ||
-          selectedDate.format("YYYY-MM-DD"),
-        endDate:
-          selectedRange[1].format("YYYY-MM-DD") ||
-          selectedDate.format("YYYY-MM-DD"),
+        startDate: !showCalendar
+          ? selectedRange[0].format("YYYY-MM-DD")
+          : selectedDate.format("YYYY-MM-DD"),
+        endDate: !showCalendar
+          ? selectedRange[1].format("YYYY-MM-DD")
+          : selectedDate.format("YYYY-MM-DD"),
         status: activeTab || undefined,
         type: 2,
       }
