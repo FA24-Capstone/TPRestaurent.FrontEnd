@@ -71,9 +71,9 @@ const CartPage = () => {
     return <CartSummary handleClose={() => setIsSummary(false)} />;
   }
   const totalPrice = cart.total ? cart.total + (cartTotal || 0) : cartTotal;
-  useEffect(() => {
-    syncCart();
-  }, [cartReservation, cart]);
+  // useEffect(() => {
+  //   syncCart();
+  // }, [cartReservation, cart]);
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
