@@ -1,4 +1,5 @@
 import { message } from "antd";
+import dayjs from "dayjs";
 import moment from "moment-timezone";
 function formatPrice(gia) {
   /**
@@ -219,6 +220,18 @@ function numberToWords(number) {
   return words.join(" ").trim() + " đồng";
 }
 
+const combineTimes = (mealTime, endTime) => {
+  const mealMoment = dayjs(mealTime);
+  const endMoment = dayjs(endTime);
+
+  if (mealMoment.isValid() && endMoment.isValid()) {
+    const sameDay = mealMoment.format("DD-MM-YYYY");
+    const mealHour = mealMoment.format("HH:mm");
+    const endHour = endMoment.format("HH:mm");
+    return `${sameDay} ${mealHour} - ${endHour}`;
+  }
+  return "Invalid Date";
+};
 export {
   formatPrice,
   formatDateTime,
@@ -228,4 +241,5 @@ export {
   formatPhoneNumber,
   showError,
   numberToWords,
+  combineTimes,
 };

@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { formatDateTime, formatPrice } from "../../util/Utility";
+import { combineTimes, formatDateTime, formatPrice } from "../../util/Utility";
 import { Calendar, DatePicker, Table } from "antd";
 import Pagination from "../../components/pagination/Pagination";
 import useCallApi from "../../api/useCallApi";
@@ -136,9 +136,9 @@ export function AdminReservationPage() {
       dataIndex: "mealTime",
       key: "mealTime",
       render: (_, record) => (
-        <Typography>{`${formatDateTime(record.mealTime)} ${formatDateTime(
-          record.endTime
-        )}`}</Typography>
+        <Typography>
+          {combineTimes(record?.mealTime, record?.endTime)}
+        </Typography>
       ),
     },
     {

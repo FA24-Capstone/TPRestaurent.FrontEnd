@@ -13,7 +13,12 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { Calendar, DatePicker, Select, Table } from "antd";
-import { formatDateTime, formatPrice, showError } from "../../util/Utility";
+import {
+  combineTimes,
+  formatDateTime,
+  formatPrice,
+  showError,
+} from "../../util/Utility";
 import useCallApi from "../../api/useCallApi";
 import Pagination from "../../components/pagination/Pagination";
 import TabMananger from "../../components/tab/TabManager";
@@ -113,6 +118,7 @@ export function AdminMealHistoryPage() {
   const handleCurrentPageChange = (page) => {
     setCurrentPage(page);
   };
+
   const columns = [
     {
       title: "Mã đơn hàng",
@@ -153,7 +159,9 @@ export function AdminMealHistoryPage() {
       dataIndex: "mealTime",
       key: "mealTime",
       render: (_, record) => (
-        <Typography>{formatDateTime(record?.mealTime)}</Typography>
+        <Typography>
+          {combineTimes(record?.mealTime, record?.endTime)}
+        </Typography>
       ),
     },
     {
