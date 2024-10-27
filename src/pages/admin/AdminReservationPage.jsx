@@ -29,9 +29,9 @@ const { RangePicker } = DatePicker;
 const TABS = OrderStatus.filter(
   (item) => item.value == 1 || item.value == 2 || item.value == 10
 );
-
+TABS.unshift({ value: 0, label: "Tất cả" });
 export function AdminReservationPage() {
-  const [activeTab, setActiveTab] = useState("");
+  const [activeTab, setActiveTab] = useState("0");
   const [searchQuery, setSearchQuery] = useState("");
   const [reservations, setReservations] = useState([]);
   const [tables, setTables] = useState([]);

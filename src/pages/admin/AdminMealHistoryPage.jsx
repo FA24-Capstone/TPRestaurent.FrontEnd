@@ -29,6 +29,8 @@ const { RangePicker } = DatePicker;
 const TABS = OrderStatus.filter(
   (item) => item.value == 5 || item.value == 3 || item.value == 9
 );
+TABS.unshift({ value: 0, label: "Tất cả" });
+
 export const configCalendar = {
   lang: {
     locale: "vi_VN",
@@ -85,7 +87,7 @@ export const configCalendar = {
   monthFormat: "MM-YYYY",
 };
 export function AdminMealHistoryPage() {
-  const [activeTab, setActiveTab] = useState("3");
+  const [activeTab, setActiveTab] = useState("0");
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);
@@ -193,7 +195,7 @@ export function AdminMealHistoryPage() {
           ? selectedRange[1].format("YYYY-MM-DD")
           : selectedDate.format("YYYY-MM-DD"),
         status: Number(activeTab) || undefined,
-        type: selectedOrderType,
+        type: Number(selectedOrderType),
         tableId: selectedTable,
       }
     );
@@ -307,7 +309,7 @@ export function AdminMealHistoryPage() {
                   />
                 </IconButton>
               </div>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-2   rounded-xl shadow-xl p-4 border-2 ">
                 {tables.length > 0 &&
                   tables.map((table) => (
                     <div

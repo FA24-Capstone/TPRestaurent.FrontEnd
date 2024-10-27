@@ -25,10 +25,12 @@ import dayjs from "dayjs";
 import { configCalendar } from "./AdminMealHistoryPage";
 
 const TABS = OrderStatus.filter((item) => item.value > 3 && item.value < 10);
+TABS.unshift({ value: 0, label: "Tất cả" });
+
 const { RangePicker } = DatePicker;
 
 export function AdminOrderHistoryPage() {
-  const [activeTab, setActiveTab] = useState("");
+  const [activeTab, setActiveTab] = useState("0");
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);

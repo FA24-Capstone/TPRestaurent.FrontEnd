@@ -1,16 +1,20 @@
 import React from "react";
 import { Card, CardBody, Typography } from "@material-tailwind/react";
-import { Button, Table } from "antd";
+import { Button, Modal, Table } from "antd";
 import moment from "moment/moment";
 import Momo_logo from "../../../assets/imgs/payment-icon/MoMo_Logo.png";
 import VNPAY_logo from "../../../assets/imgs/payment-icon/VNpay_Logo.png";
 import { PaymentMethod } from "../../../util/GlobalType";
 import { formatDateTime, formatPrice } from "../../../util/Utility";
 import { StyledTable } from "../../custom-ui/StyledTable";
+import { WarningOutlined } from "@ant-design/icons";
+import useCallApi from "../../../api/useCallApi";
+import { ConfigurationApi, OrderApi } from "../../../api/endpoint";
+import dayjs from "dayjs";
 
-const ReservationDetail = ({ reservationData }) => {
+const ReservationDetail = ({ reservationData, fetchData }) => {
   const { order, orderDishes, orderTables } = reservationData;
-
+  const { callApi, error, loading } = useCallApi();
   const renderPaymentMethod = () => {
     switch (order?.transaction?.paymentMethodId) {
       case PaymentMethod.MOMO:
@@ -102,15 +106,7 @@ const ReservationDetail = ({ reservationData }) => {
       ),
     },
   ];
-  const calculateTotalOrder = () => {
-    return orderDishes?.reduce((total, order) => {
-      if (order.comboDish) {
-        return total + order.comboDish.combo.price * order.quantity;
-      } else {
-        return total + order.dishSizeDetail.price * order.quantity;
-      }
-    }, 0);
-  };
+
   const dataSource = orderDishes?.flatMap((order) => {
     if (order.comboDish) {
       return {
@@ -161,6 +157,103 @@ const ReservationDetail = ({ reservationData }) => {
           return false;
         }
     }
+  };
+  const handleCancelOrder = async (orderId) => {
+    debugger;
+    const response = await callApi(
+      `${ConfigurationApi.GET_CONFIG_BY_NAME}/TIME_TO_RESERVATION_WITH_DISHES_LAST`,
+      "GET"
+    );
+    let time = response?.result?.currentValue;
+
+    const currentTime = dayjs();
+
+    switch (order?.orderTypeId) {
+      case 1:
+        const reservationDate = dayjs(order?.reservationDate.split(".")[0]);
+        const targetTime = reservationDate.add(time, "hour");
+
+        if (currentTime.isAfter(targetTime)) {
+          Modal.error({
+            title: "Hủy đơn hàng",
+            content: (
+              <div>
+                <p>
+                  Đơn hàng đã được tạo trong thời gian quy định không thể hủy
+                </p>
+              </div>
+            ),
+          });
+          return;
+        }
+        break;
+      case 2:
+        const orderDate = dayjs(order?.orderDate.split(".")[0]);
+        const targetTimeOrder = orderDate.add(time, "hour");
+
+        if (currentTime.isAfter(targetTimeOrder)) {
+          Modal.error({
+            title: "Hủy đơn hàng",
+            content: (
+              <div>
+                <p>
+                  Đơn hàng đã được tạo trong thời gian quy định không thể hủy
+                </p>
+              </div>
+            ),
+          });
+          return;
+        }
+        break;
+      case 3:
+        const mealTime = dayjs(order?.mealTime.split(".")[0]);
+        const targetMealTime = mealTime.add(time, "hour");
+
+        if (currentTime.isAfter(targetMealTime)) {
+          Modal.error({
+            title: "Hủy đơn hàng",
+            content: (
+              <div>
+                <p>
+                  Đơn hàng đã được tạo trong thời gian quy định không thể hủy
+                </p>
+              </div>
+            ),
+          });
+          return;
+        }
+    }
+
+    Modal.confirm({
+      title: "Hủy đơn hàng",
+      content: (
+        <div>
+          <p>Bạn có chắc chắn muốn hủy đơn hàng này không?</p>
+          <p> </p>
+          <p className="text-red-600 font-semibold">
+            Lưu ý: Hủy đơn hàng sẽ không thể khôi phục lại
+          </p>
+        </div>
+      ),
+      async onOk() {
+        const response = await callApi(
+          `${OrderApi.UPDATE_ORDER_STATUS}/${order.orderId}?isSuccessful=false`,
+          "PUT"
+        );
+        if (response?.isSuccess) {
+          await fetchData(order.orderId);
+          Modal.success({
+            title: "Hủy đơn hàng",
+            content: (
+              <div>
+                <p>Hủy đơn hàng thành công</p>
+              </div>
+            ),
+          });
+        }
+      },
+      onCancel() {},
+    });
   };
   return (
     <Card className="w-full shadow-none border-none">
@@ -257,7 +350,7 @@ const ReservationDetail = ({ reservationData }) => {
               }
               value={
                 order?.orderTypeId === 1
-                  ? `${formatPrice(order?.deposit?.toLocaleString())} `
+                  ? `${formatPrice(order?.deposit)} `
                   : `${formatPrice(order?.totalAmount)}`
               }
             />
@@ -302,6 +395,17 @@ const ReservationDetail = ({ reservationData }) => {
             <Button className="bg-red-900 text-white mx-auto">
               Thanh toán ngay
             </Button>
+          </div>
+        )}
+        {order?.statusId == 2 && (
+          <div
+            className="p-4 flex items-center gap-1 cursor-pointer"
+            onClick={() => handleCancelOrder(order?.orderId)}
+          >
+            <WarningOutlined className="text-yellow-800 text-2xl " />
+            <Typography variant="h6" className="font-semibold text-yellow-800">
+              Tôi muốn hủy đơn hàng
+            </Typography>
           </div>
         )}
       </CardBody>

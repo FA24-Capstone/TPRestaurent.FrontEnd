@@ -20,6 +20,8 @@ const ReservationRequestItem = ({ reservation }) => {
   const [open, setOpen] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(2);
   const { callApi, error, loading } = useCallApi();
+  const [reservationData, setReservationData] = useState({});
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -43,19 +45,18 @@ const ReservationRequestItem = ({ reservation }) => {
       <span className="text-red-900 mx-1">{formattedEndTime}</span>
     </span>
   );
-  const [reservationData, setReservationData] = useState({});
-  const handleChange = async (id) => {
-    setShowDetails(!showDetails);
+  const fetchReservationDetail = async (id) => {
     const response = await callApi(`${OrderApi.GET_DETAIL}/${id}`, "GET");
     if (response?.isSuccess) {
       setReservationData(response?.result);
       setCurrentReservationId(id);
     }
   };
-  useEffect(() => {
-    if (showDetails) {
-    }
-  }, [showDetails, reservationId]);
+  const handleChange = async (id) => {
+    setShowDetails(!showDetails);
+    await fetchReservationDetail(id);
+  };
+
   const statusKey = getKeyByValue(ReservationStatus, reservation.statusId);
   const handlePayment = async () => {
     const data = await callApi(`${TransactionApi.CREATE_PAYMENT}`, "POST", {
@@ -155,7 +156,10 @@ const ReservationRequestItem = ({ reservation }) => {
       </div>
 
       {!loading && showDetails && (
-        <ReservationDetail reservationData={reservationData} />
+        <ReservationDetail
+          reservationData={reservationData}
+          fetchData={fetchReservationDetail}
+        />
       )}
       <div>
         <Modal open={open} onCancel={handleClose} footer={null}>

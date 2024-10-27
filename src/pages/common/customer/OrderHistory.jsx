@@ -25,6 +25,7 @@ import { AccountApi, OrderApi } from "../../../api/endpoint";
 import LoadingOverlay from "../../../components/loading/LoadingOverlay";
 import OrderHistoryList from "../../../components/order-history/OrderHistoryList";
 import { OrderStatus } from "../../../util/GlobalType";
+import { useSelector } from "react-redux";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -33,7 +34,8 @@ const { TabPane } = Tabs;
 export function OrderHistory() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const user = useSelector((state) => state.user.user || {});
+  const [phoneNumber, setPhoneNumber] = useState("" || user.phoneNumber);
   const [reservationStatus, setReservationStatus] = useState("");
   const [selectedOrderStatus, setselectedOrderStatus] = useState("");
   const [reservations, setReservations] = useState([]);

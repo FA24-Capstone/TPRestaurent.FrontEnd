@@ -37,13 +37,8 @@ export function AdminDevicePage() {
   }, []);
   const columns = [
     {
-      title: "Mã thiết bị ",
-      dataIndex: "deviceCode",
-      key: "deviceCode",
-    },
-    {
       title: "Tên bàn",
-      dataIndex: ["table", "tableName"],
+      dataIndex: "tableName",
       key: "tableName",
     },
     {
@@ -135,7 +130,12 @@ export function AdminDevicePage() {
         </div>
       </CardHeader>
       <CardBody className="overflow-auto h-[550px]">
-        <Table dataSource={devices} columns={columns} rowKey="deviceId" />
+        <Table
+          dataSource={devices}
+          columns={columns}
+          rowKey="deviceId"
+          pagination={false}
+        />
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
