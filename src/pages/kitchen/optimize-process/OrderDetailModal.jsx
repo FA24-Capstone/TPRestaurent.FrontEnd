@@ -339,7 +339,12 @@ const OrderDetailModal = ({
                 <div className="flex justify-center py-4 border-t border-gray-100">
                   <Button
                     onClick={async () => {
-                      await handleUpdateStatus(selectedRowKeys);
+                      await handleUpdateStatus(
+                        selectedRowKeys.map((key) => ({
+                          orderDetailId: key,
+                          dishId: selectedDish.dish.dishId,
+                        }))
+                      );
                     }}
                     loading={loading}
                     className="h-10 px-8 text-base font-medium bg-red-800 text-white"
