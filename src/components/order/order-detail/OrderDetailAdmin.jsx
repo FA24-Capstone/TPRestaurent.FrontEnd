@@ -1,20 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardBody, Typography } from "@material-tailwind/react";
-import { Button, Modal, Table } from "antd";
+import { Button, Input, message, Modal, Table } from "antd";
 import moment from "moment/moment";
 import Momo_logo from "../../../assets/imgs/payment-icon/MoMo_Logo.png";
 import VNPAY_logo from "../../../assets/imgs/payment-icon/VNpay_Logo.png";
 import { PaymentMethod } from "../../../util/GlobalType";
-import { formatDateTime, formatPrice } from "../../../util/Utility";
+import { formatDateTime, formatPrice, showError } from "../../../util/Utility";
 import { StyledTable } from "../../custom-ui/StyledTable";
 import { WarningOutlined } from "@ant-design/icons";
 import useCallApi from "../../../api/useCallApi";
 import { ConfigurationApi, OrderApi } from "../../../api/endpoint";
 import dayjs from "dayjs";
+import { DollarSign } from "lucide-react";
+import LoadingOverlay from "../../loading/LoadingOverlay";
 
 const OrderDetailAdmin = ({ reservationData, fetchData }) => {
   const { order, orderDishes, orderTables } = reservationData;
   const { callApi, error, loading } = useCallApi();
+  const [amount, setAmount] = useState("");
+  const totalAmount = order.totalAmount;
+
+  const handlePayment = async () => {
+    const response = await callApi(
+      `${OrderApi.MAKE_DINE_IN_ORDER_BILL}`,
+      "POST",
+      {
+        orderId: order.orderId,
+        paymentMethod: 1,
+        couponIds: [],
+        loyalPointsToUse: 0,
+      }
+    );
+    if (response?.isSuccess) {
+      message.success("Thanh toán thành công");
+    } else {
+      showError(error);
+    }
+  };
+  if (loading) {
+    return <LoadingOverlay isLoading={loading} />;
+  }
   const renderPaymentMethod = () => {
     switch (order?.transaction?.paymentMethodId) {
       case PaymentMethod.MOMO:
@@ -139,7 +164,7 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
   const renderIsPayment = () => {
     switch (order?.orderTypeId) {
       case 1:
-        if (order?.statusId == 1) {
+        if (order?.statusId == 3 || order?.statusId == 5) {
           return true;
         } else {
           return false;
@@ -151,7 +176,7 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
           return false;
         }
       case 3:
-        if (order?.statusId == 3) {
+        if (order?.statusId == 3 || order?.statusId == 5) {
           return true;
         } else {
           return false;
@@ -392,16 +417,39 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
               pagination={false}
               className="border border-gray-200 rounded-lg overflow-hidden"
             />
+            {renderIsPayment() && (
+              <Card className="max-w-md mx-auto">
+                <div className="flex flex-col space-y-4">
+                  <Input
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    type="number"
+                    placeholder="Tiền khách đưa"
+                    label="Tiền khách đưa"
+                    prefix={<DollarSign className="mr-2" size={16} />}
+                  />
+
+                  {amount - totalAmount !== 0 && (
+                    <Typography
+                      type={amount - totalAmount >= 0 ? "success" : "danger"}
+                    >
+                      {amount - totalAmount >= 0
+                        ? `Tiền thối lại: ${formatPrice(amount - totalAmount)}`
+                        : "Tiền khách trả không đủ"}
+                    </Typography>
+                  )}
+                  <Button
+                    type="primary"
+                    className="bg-red-900 hover:bg-red-800"
+                    onClick={handlePayment}
+                  >
+                    Thanh toán bằng tiền mặt
+                  </Button>
+                </div>
+              </Card>
+            )}
           </div>
         </div>
-
-        {renderIsPayment() && (
-          <div className="flex justify-center my-4">
-            <Button className="bg-red-900 text-white mx-auto">
-              Thanh toán ngay
-            </Button>
-          </div>
-        )}
       </CardBody>
     </Card>
   );

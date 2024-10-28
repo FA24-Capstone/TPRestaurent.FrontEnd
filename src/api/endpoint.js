@@ -58,6 +58,7 @@ export const OrderApi = {
   GET_CART_COMBO_ITEM: "/order/get-cart-combo-item",
   GET_CART_DISH_ITEM: "/order/get-cart-dish-item",
   UPDATE_ORDER_STATUS: "/order/update-order-status",
+  MAKE_DINE_IN_ORDER_BILL: "/order/make-dine-in-order-bill",
 };
 
 export const ReservationApi = {
