@@ -17,12 +17,14 @@ import {
   increaseComboQuantity,
   removeCombo,
 } from "../../../redux/features/cartSlice";
+import useSyncCart from "../../../hook/useSyncCart";
 
 export function ReservationCart() {
   const cartReservation = useSelector((state) => state.cartReservation);
   const cartCombos = useSelector((state) => state.cart);
 
   const dispatch = useDispatch();
+  const syncCart = useSyncCart(cartReservation, cartCombos);
 
   // Handlers for combo actions
   const handleIncreaseComboQuantity = (comboId, selectedDishes) => {
@@ -63,7 +65,9 @@ export function ReservationCart() {
       })
     );
   };
-
+  useEffect(() => {
+    syncCart();
+  }, []);
   return (
     <div className=" mx-auto bg-white ">
       <Typography variant="h4" className="mb-4 text-center">

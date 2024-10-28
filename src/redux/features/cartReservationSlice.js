@@ -1,6 +1,5 @@
 // src/features/cartReservationSlice.js
 import { createSlice, createSelector } from "@reduxjs/toolkit";
-import { set } from "lodash";
 
 const cartReservationSlice = createSlice({
   name: "cartReservation",
@@ -83,7 +82,7 @@ const selectCartItems = (state) => state.cartReservation;
 
 // Selector to calculate the total
 export const getTotal = createSelector([selectCartItems], (items) =>
-  items.reduce((total, item) => total + item.size.price * item.quantity, 0)
+  items?.reduce((total, item) => total + item.size.price * item.quantity, 0)
 );
 
 export const {

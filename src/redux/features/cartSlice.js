@@ -12,8 +12,8 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     setCartCombo: (state, action) => {
-      state.items = action.payload;
-      state.total = calculateTotal(state.items);
+      state.items = action.payload.items;
+      state.total = action.payload.total;
     },
     addCombo: (state, action) => {
       const newCombo = action.payload;
