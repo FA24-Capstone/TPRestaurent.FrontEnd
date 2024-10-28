@@ -5,7 +5,6 @@ import {
   getKeyByValue,
   showError,
 } from "../../../util/Utility";
-import ReservationDetail from "../reservation-detail/ReservationDetail";
 import { ReservationStatus } from "../../../util/GlobalType";
 import useCallApi from "../../../api/useCallApi";
 import { OrderApi, TransactionApi } from "../../../api/endpoint";
@@ -13,6 +12,7 @@ import moment from "moment/moment";
 import LoadingOverlay from "../../loading/LoadingOverlay";
 import { Button, message, Modal } from "antd";
 import PaymentMethodSelector from "../../cart/PaymentMethodSelector";
+import OrderDetail from "../order-detail/OrderDetail";
 
 const ReservationRequestItem = ({ reservation }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -156,7 +156,7 @@ const ReservationRequestItem = ({ reservation }) => {
       </div>
 
       {!loading && showDetails && (
-        <ReservationDetail
+        <OrderDetail
           reservationData={reservationData}
           fetchData={fetchReservationDetail}
         />

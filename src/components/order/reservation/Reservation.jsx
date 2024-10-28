@@ -9,21 +9,19 @@ import {
 } from "antd";
 import { UserOutlined, MailOutlined, TeamOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import OtpConfirmModal from "../../pages/login/OtpConfirmModal";
-import ModalReservationWithDish from "./modal/ModalReservationWithDish";
-import reservationImage from "../../assets/imgs/reservation.png";
+import reservationImage from "../../../assets/imgs/reservation.png";
 import moment from "moment";
 import {
   formatPhoneNumber,
   isEmptyObject,
   showError,
-} from "../../util/Utility";
+} from "../../../util/Utility";
 import { useSelector } from "react-redux";
-import useCallApi from "../../api/useCallApi";
-import { AccountApi, OrderApi } from "../../api/endpoint";
-import ModalPolicy from "../policy/PolicyModal";
-import ModalReservationWithoutDish from "./modal/ModalReservationWithoutDish";
+import useCallApi from "../../../api/useCallApi";
+import { AccountApi, OrderApi } from "../../../api/endpoint";
+import ModalPolicy from "../../policy/PolicyModal";
 import dayjs from "dayjs";
+import ModalReservationWithDish from "../modal/ModalReservationWithDish";
 const { TextArea } = Input;
 
 const Reservation = () => {

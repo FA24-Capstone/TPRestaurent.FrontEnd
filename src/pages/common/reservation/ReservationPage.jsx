@@ -1,5 +1,4 @@
-import Reservation from "../../../components/reservation/Reservation";
-import TopVoucher from "../../../components/top-voucher/TopVoucher";
+import Reservation from "../../../components/order/reservation/Reservation";
 
 const ReservationPage = () => {
   return (

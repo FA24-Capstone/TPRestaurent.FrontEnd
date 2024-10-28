@@ -1,8 +1,7 @@
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
-import { formatDateTime } from "../../util/Utility";
+import { formatDateTime, formatPrice } from "../../util/Utility";
 
 const StoreCreditHistoryItem = ({ storeCredit }) => {
-  console.log(storeCredit);
   return (
     <div
       className={
@@ -30,7 +29,7 @@ const StoreCreditHistoryItem = ({ storeCredit }) => {
             }`}
           >
             {storeCredit?.amount > 0 ? "Nhận" : "Trừ"}{" "}
-            {storeCredit?.amount.toLocaleString()} đồng
+            {formatPrice(storeCredit?.amount)}
           </p>
           <p className="text-gray-500 text-sm">
             {formatDateTime(storeCredit?.paidDate)}
@@ -44,10 +43,10 @@ const StoreCreditHistoryItem = ({ storeCredit }) => {
           }`}
         >
           {storeCredit?.amount > 0 && "+"}
-          {storeCredit?.amount.toLocaleString()}
+          {formatPrice(storeCredit?.amount)}
         </p>
         <p className="text-gray-600 text-sm">
-          {/* Số dư:  {storeCredit.balanceAfter.toLocaleString()} */}
+          Số dư: {formatPrice(storeCredit?.balance)}
         </p>
       </div>
     </div>

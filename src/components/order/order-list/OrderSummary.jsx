@@ -1,18 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Card, CardBody } from "@material-tailwind/react";
-import {
-  formatDate,
-  formatDateTime,
-  formatPrice,
-  showError,
-} from "../../../util/Utility";
-import ReservationInformation from "../ReservationInformation";
+import { formatPrice, showError } from "../../../util/Utility";
+import ReservationInformation from "../reservation/ReservationInformation";
 import { Button, message, Modal, Typography } from "antd";
 import PaymentMethodSelector from "../../cart/PaymentMethodSelector";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useCallApi from "../../../api/useCallApi";
 import LoadingOverlay from "../../loading/LoadingOverlay";
-import { ConfigurationApi, OrderApi } from "../../../api/endpoint";
+import { OrderApi } from "../../../api/endpoint";
 import { useNavigate } from "react-router-dom";
 import {
   clearCart,

@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import LoyalPointHistoryList from "../../../components/loyalpoint/LoyalPointHistoryList";
 import { Button, Tooltip } from "antd";
 import { Coins, Gift, HelpCircle, Wallet } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MoneyCollectFilled } from "@ant-design/icons";
 import useCallApi from "../../../api/useCallApi";
-import { TransactionApi } from "../../../api/endpoint";
+import { AccountApi, TransactionApi } from "../../../api/endpoint";
 import { formatPrice, showError } from "../../../util/Utility";
 import StoreCreditHistory from "../../../components/store-credit/StoreCreditHistory";
 import CreateStoreCreditModal from "../../../components/store-credit/CreateStoreCreditModal";
+import { login } from "../../../redux/features/authSlice";
 
 const PersonalTransaction = () => {
   const user = useSelector((state) => state.user.user || {});
@@ -17,7 +18,16 @@ const PersonalTransaction = () => {
   const [transactions, setTransactions] = useState([]);
   const [storeCreditTransactions, setStoreCreditTransactions] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
   const fetchData = async () => {
+    const fetchUser = await callApi(
+      `${AccountApi.GET_BY_PHONE}?phoneNumber=${user.phoneNumber}`,
+      "GET"
+    );
+    if (fetchUser.isSuccess) {
+      dispatch(login(fetchUser.result));
+    }
+
     if (activeTab === "loyalPoint") {
       const res = await callApi(
         `${TransactionApi.GET_LOYALTY_POINT_BY_CUSTOMER}/${user.id}`,

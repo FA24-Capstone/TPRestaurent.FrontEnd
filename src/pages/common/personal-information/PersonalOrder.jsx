@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import OrderHistoryList from "../../../components/order-history/OrderHistoryList";
 import useCallApi from "../../../api/useCallApi";
 import { useSelector } from "react-redux";
 import LoadingOverlay from "../../../components/loading/LoadingOverlay";
 import Pagination from "../../../components/pagination/Pagination";
 import TabMananger from "../../../components/tab/TabManager";
 import { OrderApi } from "../../../api/endpoint";
+import OrderHistoryList from "../../../components/order/order-history/OrderHistoryList";
 
 const PersonalOrder = () => {
   const { callApi, error, loading } = useCallApi();

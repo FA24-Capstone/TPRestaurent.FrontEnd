@@ -24,11 +24,12 @@ import Pagination from "../../components/pagination/Pagination";
 import TabMananger from "../../components/tab/TabManager";
 import { OrderApi, TableApi } from "../../api/endpoint";
 import OrderTag from "../../components/tag/OrderTag";
-import ModalReservationDetail from "../../components/reservation/modal/ModalReservationDetail";
+import ModalReservationDetail from "../../components/order/modal/ModalReservationDetail";
 import { StyledTable } from "../../components/custom-ui/StyledTable";
 import { OrderStatus } from "../../util/GlobalType";
 import dayjs from "dayjs";
 import LoadingOverlay from "../../components/loading/LoadingOverlay";
+import ModalOrderDetailAdmin from "../../components/order/modal/ModalOrderDetailAdmin";
 const { RangePicker } = DatePicker;
 
 const TABS = OrderStatus.filter(
@@ -372,7 +373,7 @@ export function AdminMealHistoryPage() {
           onPageChange={handleCurrentPageChange}
         />
       </Card>
-      <ModalReservationDetail
+      <ModalOrderDetailAdmin
         visible={isModalOpen}
         onClose={() => {
           setIsModalOpen(!isModalOpen);

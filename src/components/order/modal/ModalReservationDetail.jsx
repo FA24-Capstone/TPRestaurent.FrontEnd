@@ -1,11 +1,11 @@
 import { Modal } from "antd";
-import ReservationDetail from "../reservation-detail/ReservationDetail";
+import OrderDetail from "../order-detail/OrderDetail";
 
 const ModalReservationDetail = ({ reservation, visible, onClose }) => {
   return (
     <Modal open={visible} onCancel={onClose} footer={null} width={950}>
       <div className="h-[650px] overflow-auto">
-        <ReservationDetail reservationData={reservation} />
+        <OrderDetail reservationData={reservation} />
       </div>
     </Modal>
   );

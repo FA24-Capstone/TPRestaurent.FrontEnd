@@ -12,7 +12,7 @@ import useCallApi from "../../../api/useCallApi";
 import { ConfigurationApi, OrderApi } from "../../../api/endpoint";
 import dayjs from "dayjs";
 
-const ReservationDetail = ({ reservationData, fetchData }) => {
+const OrderDetail = ({ reservationData, fetchData }) => {
   const { order, orderDishes, orderTables } = reservationData;
   const { callApi, error, loading } = useCallApi();
   const renderPaymentMethod = () => {
@@ -420,4 +420,4 @@ const InfoItem = ({ label, value, isComponent = false }) => (
   </div>
 );
 
-export default ReservationDetail;
+export default OrderDetail;

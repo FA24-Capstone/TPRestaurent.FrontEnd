@@ -18,14 +18,14 @@ import {
 } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { formatPrice, isEmptyObject, showError } from "../../../util/Utility";
-import ReservationList from "../../../components/reservation/reservation-list/ReservationList";
 import { Search } from "lucide-react";
 import useCallApi from "../../../api/useCallApi";
 import { AccountApi, OrderApi } from "../../../api/endpoint";
 import LoadingOverlay from "../../../components/loading/LoadingOverlay";
-import OrderHistoryList from "../../../components/order-history/OrderHistoryList";
 import { OrderStatus } from "../../../util/GlobalType";
 import { useSelector } from "react-redux";
+import ReservationList from "../../../components/order/order-list/ReservationList";
+import OrderHistoryList from "../../../components/order/order-history/OrderHistoryList";
 
 const { Title } = Typography;
 const { Option } = Select;

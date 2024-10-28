@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 import LoadingOverlay from "../../../components/loading/LoadingOverlay";
 import Pagination from "../../../components/pagination/Pagination";
 import TabMananger from "../../../components/tab/TabManager";
-import ReservationList from "../../../components/reservation/reservation-list/ReservationList";
 import { OrderApi } from "../../../api/endpoint";
+import ReservationList from "../../../components/order/order-list/ReservationList";
 
 const PersonalReservation = () => {
   const { callApi, error, loading } = useCallApi();

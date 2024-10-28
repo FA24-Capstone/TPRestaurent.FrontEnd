@@ -3,8 +3,8 @@ import {
   removeFromCart,
   increaseQuantity,
   decreaseQuantity,
-} from "../../redux/features/cartReservationSlice";
-import { formatPrice } from "../../util/Utility";
+} from "../../../redux/features/cartReservationSlice";
+import { formatPrice } from "../../../util/Utility";
 import {
   Card,
   CardBody,
@@ -16,7 +16,7 @@ import {
   decreaseComboQuantity,
   increaseComboQuantity,
   removeCombo,
-} from "../../redux/features/cartSlice";
+} from "../../../redux/features/cartSlice";
 
 export function ReservationCart() {
   const cartReservation = useSelector((state) => state.cartReservation);

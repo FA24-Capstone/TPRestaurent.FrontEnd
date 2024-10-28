@@ -18,11 +18,12 @@ import Pagination from "../../components/pagination/Pagination";
 import TabMananger from "../../components/tab/TabManager";
 import { AccountApi, OrderApi } from "../../api/endpoint";
 import OrderTag from "../../components/tag/OrderTag";
-import ModalReservationDetail from "../../components/reservation/modal/ModalReservationDetail";
+import ModalReservationDetail from "../../components/order/modal/ModalReservationDetail";
 import { StyledTable } from "../../components/custom-ui/StyledTable";
 import { OrderStatus } from "../../util/GlobalType";
 import dayjs from "dayjs";
 import { configCalendar } from "./AdminMealHistoryPage";
+import ModalOrderDetailAdmin from "../../components/order/modal/ModalOrderDetailAdmin";
 
 const TABS = OrderStatus.filter((item) => item.value > 3 && item.value < 10);
 TABS.unshift({ value: 0, label: "Tất cả" });
@@ -347,7 +348,7 @@ export function AdminOrderHistoryPage() {
           onPageChange={handleCurrentPageChange}
         />
       </Card>
-      <ModalReservationDetail
+      <ModalOrderDetailAdmin
         visible={open}
         onClose={() => setOpen(!open)}
         reservation={orderSelected}

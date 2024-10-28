@@ -9,8 +9,6 @@ import {
   getTotal,
 } from "../../../redux/features/cartReservationSlice";
 
-import ReservationInformation from "../ReservationInformation";
-import { ReservationCart } from "../ReservationCart";
 import ComboDetail2 from "../../../pages/common/menu-page/ComboDetail";
 
 import {
@@ -30,10 +28,12 @@ import {
 } from "../../../api/endpoint";
 import DishCard from "../../dish/DishCard";
 import ComboCard from "../../combo/ComboCard";
-import OrderSummary from "../reservation-list/OrderSummary";
+import OrderSummary from "../order-list/OrderSummary";
 import LoadingOverlay from "../../loading/LoadingOverlay";
 import moment from "moment-timezone";
+import { ReservationCart } from "../reservation/ReservationCart";
 const { TabPane } = Tabs;
+import ReservationInformation from "../reservation/ReservationInformation";
 
 const ModalReservationWithDish = ({
   visible,

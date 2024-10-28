@@ -17,10 +17,11 @@ import TabMananger from "../../../components/tab/TabManager";
 import Pagination from "../../../components/pagination/Pagination";
 import { formatDate, formatDateTime, formatPrice } from "../../../util/Utility";
 import { StyledTable } from "../../../components/custom-ui/StyledTable";
-import ReservationDetail from "../../../components/reservation/reservation-detail/ReservationDetail";
-import ModalReservationDetail from "../../../components/reservation/modal/ModalReservationDetail";
+import OrderDetail from "../../../components/order/order-detail/OrderDetail";
+import ModalReservationDetail from "../../../components/order/modal/ModalReservationDetail";
 import { set } from "lodash";
 import { OrderStatus } from "../../../util/GlobalType";
+import ModalOrderDetailAdmin from "../../../components/order/modal/ModalOrderDetailAdmin";
 
 const { Title } = Typography;
 
@@ -325,7 +326,7 @@ const AdminShipperPage = () => {
           />
         </div>
       </div>
-      <ModalReservationDetail
+      <ModalOrderDetailAdmin
         onClose={() => setIsModalOpen(!isModalOpen)}
         reservation={orderDetail}
         visible={isModalOpen}

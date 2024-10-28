@@ -28,6 +28,10 @@ const getMethodIcon = (method) => {
       return <img src={VNpay_Logo} alt="" className="w-12 h-12" />;
     case 3:
       return <img src={MoMo_Logo} alt="" className="w-12 h-12" />;
+    case 4:
+      return <img src={Cash_Logo} alt="" className="w-12 h-12" />;
+    case 5:
+      return <img src={Cash_Logo} alt="" className="w-12 h-12" />;
 
     default:
       return null;

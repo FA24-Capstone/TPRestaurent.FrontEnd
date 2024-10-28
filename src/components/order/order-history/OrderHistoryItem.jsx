@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import useCallApi from "../../api/useCallApi";
-import { formatDateTime, formatPrice, showError } from "../../util/Utility";
-import LoadingOverlay from "../loading/LoadingOverlay";
-import ReservationDetail from "../reservation/reservation-detail/ReservationDetail";
-import { OrderApi } from "../../api/endpoint";
+import useCallApi from "../../../api/useCallApi";
+import { formatDateTime, formatPrice, showError } from "../../../util/Utility";
+import LoadingOverlay from "../../loading/LoadingOverlay";
+import { OrderApi } from "../../../api/endpoint";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
+import OrderDetail from "../order-detail/OrderDetail";
 
 const OrderHistoryItem = ({ order }) => {
   const { callApi, error, loading } = useCallApi();
@@ -103,7 +103,7 @@ const OrderHistoryItem = ({ order }) => {
           </button>
         </div>
         {!loading && showDetails && (
-          <ReservationDetail reservationData={reservationData} />
+          <OrderDetail reservationData={reservationData} />
         )}
       </div>
     </div>
