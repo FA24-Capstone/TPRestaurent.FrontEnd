@@ -174,7 +174,7 @@ function Routers() {
       children: [
         {
           index: true,
-          element: <TransactionPage />,
+          element: <AdminDashboardPage />,
         },
         {
           path: "order-history",
