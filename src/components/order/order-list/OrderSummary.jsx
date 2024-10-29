@@ -32,6 +32,16 @@ const OrderSummary = ({ back, data, information, dateDeposit }) => {
   const { callApi, error, loading } = useCallApi();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const handleDecreaseComboQuantity = (comboId, selectedDishes) => {
+    dispatch(decreaseComboQuantity({ comboId, selectedDishes }));
+  };
+  const handleIncreaseComboQuantity = (comboId, selectedDishes) => {
+    dispatch(increaseComboQuantity({ comboId, selectedDishes }));
+  };
+  const handleRemoveCombo = (comboId, selectedDishes) => {
+    dispatch(removeCombo({ comboId, selectedDishes }));
+  };
+  const total = useSelector(getTotal) + cartCombos.total;
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -75,9 +85,6 @@ const OrderSummary = ({ back, data, information, dateDeposit }) => {
     }
   };
 
-  if (loading) {
-    return <LoadingOverlay isLoading={loading} />;
-  }
   const selectedPaymentMethodIcon = () => {
     switch (selectedMethod) {
       case 1:
@@ -91,17 +98,6 @@ const OrderSummary = ({ back, data, information, dateDeposit }) => {
         return null;
     }
   };
-
-  const handleDecreaseComboQuantity = (comboId, selectedDishes) => {
-    dispatch(decreaseComboQuantity({ comboId, selectedDishes }));
-  };
-  const handleIncreaseComboQuantity = (comboId, selectedDishes) => {
-    dispatch(increaseComboQuantity({ comboId, selectedDishes }));
-  };
-  const handleRemoveCombo = (comboId, selectedDishes) => {
-    dispatch(removeCombo({ comboId, selectedDishes }));
-  };
-  const total = useSelector(getTotal) + cartCombos.total;
 
   return (
     <div className="container">
@@ -184,6 +180,7 @@ const OrderSummary = ({ back, data, information, dateDeposit }) => {
           <Button
             className="bg-red-800 my-2 text-white hover:bg-red-600"
             onClick={handleCheckOut}
+            loading={loading}
           >
             Tiến hành thanh toán
           </Button>
