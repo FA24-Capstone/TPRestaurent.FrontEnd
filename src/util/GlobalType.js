@@ -2,6 +2,7 @@ export const PaymentMethod = {
   CASH: 1,
   VNPAY: 2,
   MOMO: 3,
+  STORE_CREDIT: 5,
 };
 // enums/RatingPoint.js
 export const ReservationStatus = {

@@ -4,6 +4,7 @@ import { Button, Input, message, Modal, Table } from "antd";
 import moment from "moment/moment";
 import Momo_logo from "../../../assets/imgs/payment-icon/MoMo_Logo.png";
 import VNPAY_logo from "../../../assets/imgs/payment-icon/VNpay_Logo.png";
+import Cash_Logo from "../../../assets/imgs/payment-icon/Cash_Logo.png";
 import { PaymentMethod } from "../../../util/GlobalType";
 import { formatDateTime, formatPrice, showError } from "../../../util/Utility";
 import { StyledTable } from "../../custom-ui/StyledTable";
@@ -64,6 +65,15 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
           <div className="flex items-center">
             <img src={VNPAY_logo} className="h-6 w-6 mr-2" alt="VNPAY" />
             <span className="text-blue-600 font-semibold">VNPAY</span>
+          </div>
+        );
+      case PaymentMethod.STORE_CREDIT:
+        return (
+          <div className="flex items-center">
+            <img src={Cash_Logo} className="h-6 w-6 mr-2" alt="VNPAY" />
+            <span className="text-yellow-800 font-semibold">
+              Tài khoản Thiên Phú
+            </span>
           </div>
         );
       default:
@@ -376,7 +386,7 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
                 color="blue-gray"
                 className="mb-4 font-semibold"
               >
-                Thông Tin Đặt Cọc
+                Thông Tin Giao Dịch
               </Typography>
               <InfoItem
                 label={
@@ -397,18 +407,26 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
                     value={renderPaymentMethod()}
                     isComponent
                   />
-
-                  <InfoItem
-                    label={
-                      order?.orderTypeId === 1
-                        ? "Đã đặt cọc lúc"
-                        : "Đã thanh toán lúc"
-                    }
-                    value={
-                      order.orderTypeId === 1 &&
-                      moment(order?.depositDate).format("DD/MM/YYYY HH:mm")
-                    }
-                  />
+                  {order.transaction?.transactionTypeId == 4 ? (
+                    <InfoItem
+                      label={"Đã hoàn lại tiền vào lúc"}
+                      value={moment(order?.transaction?.paidDate).format(
+                        "DD/MM/YYYY HH:mm"
+                      )}
+                    />
+                  ) : (
+                    <InfoItem
+                      label={
+                        order?.orderTypeId === 1
+                          ? "Đã đặt cọc lúc"
+                          : "Đã thanh toán lúc"
+                      }
+                      value={
+                        order.orderTypeId === 1 &&
+                        moment(order?.depositDate).format("DD/MM/YYYY HH:mm")
+                      }
+                    />
+                  )}
                 </>
               )}
             </div>
