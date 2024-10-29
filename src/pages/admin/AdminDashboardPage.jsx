@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardBody,
@@ -30,6 +30,13 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import useCallApi from "../../api/useCallApi";
+import { OrderApi } from "../../api/endpoint";
+import dayjs from "dayjs";
+import { formatDate } from "../../util/Utility";
+import OrderTag from "../../components/tag/OrderTag";
+import ModalOrderDetailAdmin from "../../components/order/modal/ModalOrderDetailAdmin";
+import LoadingOverlay from "../../components/loading/LoadingOverlay";
 
 // Thêm mock data cho các biểu đồ
 const mockData = {
@@ -113,6 +120,38 @@ const AdminDashboardPage = ({
   categoryData = mockData.categoryData,
   orderStatusData = mockData.orderStatusData,
 }) => {
+  const [reservations, setReservations] = useState([]);
+  const { callApi, error, loading } = useCallApi();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [orderDetail, setOrderDetail] = useState(null);
+  const fetchDetail = async (id) => {
+    const response = await callApi(`${OrderApi.GET_DETAIL}/${id}`, "GET");
+    if (response?.isSuccess) {
+      setOrderDetail(response?.result);
+      setIsModalOpen(true);
+    }
+  };
+  const fetchReservations = async () => {
+    const response = await callApi(
+      `${OrderApi.GET_ORDER_WITH_FILTER}`,
+      "POST",
+      {
+        startDate: dayjs().format("YYYY-MM-DD"),
+        endDate: dayjs().format("YYYY-MM-DD"),
+        type: 1 || 3,
+      }
+    );
+    if (response?.isSuccess) {
+      setReservations(response?.result?.items);
+    }
+  };
+
+  useEffect(() => {
+    fetchReservations();
+  }, []);
+  if (loading) {
+    return <LoadingOverlay isLoading={loading} />;
+  }
   return (
     <div className="grid grid-cols-1 xl:grid-cols-12">
       <div className="p-6 col-span-1 xl:col-span-9 max-h-[900px] overflow-y-auto">
@@ -262,121 +301,76 @@ const AdminDashboardPage = ({
       </div>
       <div className="col-span-1 xl:col-span-3 p-4 max-h-[900px] overflow-y-auto bg-gray-50">
         <h3>Lịch đặt bàn </h3>
-        <div className="my-2 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-4">
-          {/* Header Section */}
-          <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
-            <div className="flex items-center space-x-2">
-              <Clock className="w-4 h-4 text-gray-400" />
-              <span className="font-medium text-gray-800">
-                12 tháng 11, 2024
-              </span>
-            </div>
-            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
-              <ExternalLink className="w-4 h-4 text-gray-500" />
-            </button>
-          </div>
-
-          {/* Content Section */}
-          <div className="flex space-x-4">
-            {/* Time Indicator */}
-            <div className="relative flex flex-col items-center">
-              <div className="w-2 h-full bg-red-500 absolute top-0 left-1/2 transform -translate-x-1/2 rounded-full" />
-              <span className="bg-white z-10 px-3 py-1 rounded-full text-sm font-semibold text-gray-700 border border-gray-200">
-                13:00
-              </span>
-            </div>
-
-            {/* Booking Details */}
-            <div className="flex-1">
-              <div className="space-y-3">
-                {/* Customer Name */}
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-                    <span className="text-sm font-medium text-red-600">HQ</span>
-                  </div>
-                  <span className="font-medium text-gray-800">Hồng Quân</span>
-                </div>
-
-                {/* Table Information */}
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <MapPin className="w-4 h-4" />
-                  <span className="text-sm">Bàn TBL 003, TBL 004</span>
-                </div>
-
-                {/* Guest Count */}
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <Users className="w-4 h-4" />
-                  <span className="text-sm">4 người</span>
-                </div>
-              </div>
-
-              {/* Status Tag */}
-              <div className="mt-4">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Đã xác nhận
+        {reservations?.map((item, index) => (
+          <div
+            key={index}
+            className="my-2 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-4"
+          >
+            {/* Header Section */}
+            <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
+              <div className="flex items-center space-x-2">
+                <span className="font-medium text-gray-800">
+                  {formatDate(item?.mealTime)}
                 </span>
               </div>
-            </div>
-          </div>
-        </div>
-        <div className="my-2 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-4">
-          {/* Header Section */}
-          <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
-            <div className="flex items-center space-x-2">
-              <Clock className="w-4 h-4 text-gray-400" />
-              <span className="font-medium text-gray-800">
-                12 tháng 11, 2024
-              </span>
-            </div>
-            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
-              <ExternalLink className="w-4 h-4 text-gray-500" />
-            </button>
-          </div>
-
-          {/* Content Section */}
-          <div className="flex space-x-4">
-            {/* Time Indicator */}
-            <div className="relative flex flex-col items-center">
-              <div className="w-2 h-full bg-red-500 absolute top-0 left-1/2 transform -translate-x-1/2 rounded-full" />
-              <span className="bg-white z-10 px-3 py-1 rounded-full text-sm font-semibold text-gray-700 border border-gray-200">
-                13:00
-              </span>
+              <button
+                onClick={async () => await fetchDetail(item.orderId)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+              >
+                <ExternalLink className="w-4 h-4 text-gray-500" />
+              </button>
             </div>
 
-            {/* Booking Details */}
-            <div className="flex-1">
-              <div className="space-y-3">
-                {/* Customer Name */}
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-                    <span className="text-sm font-medium text-red-600">HQ</span>
-                  </div>
-                  <span className="font-medium text-gray-800">Hồng Quân</span>
-                </div>
-
-                {/* Table Information */}
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <MapPin className="w-4 h-4" />
-                  <span className="text-sm">Bàn TBL 003, TBL 004</span>
-                </div>
-
-                {/* Guest Count */}
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <Users className="w-4 h-4" />
-                  <span className="text-sm">4 người</span>
-                </div>
-              </div>
-
-              {/* Status Tag */}
-              <div className="mt-4">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Đã xác nhận
+            {/* Content Section */}
+            <div className="flex space-x-4">
+              {/* Time Indicator */}
+              <div className="relative flex flex-col items-center">
+                <div className="w-2 h-full bg-red-500 absolute top-0 left-1/2 transform -translate-x-1/2 rounded-full" />
+                <span className="bg-white z-10 px-3 py-1 rounded-full text-sm font-semibold text-gray-700 border border-gray-200">
+                  {dayjs(item?.mealTime).format("HH:mm")}
                 </span>
               </div>
+
+              {/* Booking Details */}
+              <div className="flex-1">
+                <div className="space-y-3">
+                  {/* Customer Name */}
+                  <div className="flex items-center space-x-2">
+                    <span className="font-medium text-gray-800">{`${item.account?.firstName} ${item.account.lastName}`}</span>
+                  </div>
+
+                  {/* Table Information */}
+                  <div className="flex items-center space-x-2 text-gray-600">
+                    <MapPin className="w-4 h-4" />
+                    <span className="text-sm">
+                      {item.tables.map((item) => (
+                        <span>{item.table.tableName}</span>
+                      ))}
+                    </span>
+                  </div>
+
+                  {/* Guest Count */}
+                  <div className="flex items-center space-x-2 text-gray-600">
+                    <Users className="w-4 h-4" />
+                    <span className="text-sm">{item.numOfPeople} người</span>
+                  </div>
+                </div>
+
+                {/* Status Tag */}
+                <div className="mt-4">
+                  <OrderTag orderStatusId={item.statusId} />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        ))}
       </div>
+      <ModalOrderDetailAdmin
+        onClose={() => setIsModalOpen(false)}
+        reservation={orderDetail}
+        visible={isModalOpen}
+        key={`MODAL`}
+      />
     </div>
   );
 };
