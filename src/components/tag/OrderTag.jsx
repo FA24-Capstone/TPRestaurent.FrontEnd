@@ -92,7 +92,7 @@ const OrderTag = ({ orderStatusId }) => {
 
   return (
     <Tag color={color} icon={icon}>
-      {text}
+      {text.toUpperCase()}
     </Tag>
   );
 };

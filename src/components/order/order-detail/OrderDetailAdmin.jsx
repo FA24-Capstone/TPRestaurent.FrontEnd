@@ -14,6 +14,7 @@ import { ConfigurationApi, OrderApi } from "../../../api/endpoint";
 import dayjs from "dayjs";
 import { DollarSign } from "lucide-react";
 import LoadingOverlay from "../../loading/LoadingOverlay";
+import OrderTag from "../../tag/OrderTag";
 
 const OrderDetailAdmin = ({ reservationData, fetchData }) => {
   const { order, orderDishes, orderTables } = reservationData;
@@ -379,6 +380,16 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
                 label="Tổng giá trị đơn hàng"
                 value={formatPrice(order?.totalAmount)}
               />
+              <InfoItem
+                label="Trạng thái đơn"
+                value={<OrderTag orderStatusId={order?.statusId} />}
+              />
+              {order.shipper && (
+                <InfoItem
+                  label="Shipper đảm nhận giao"
+                  value={`${order.shipper.lastName} ${order.shipper.firstName} - 0${order.shipper.phoneNumber}`}
+                />
+              )}
             </div>
             <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
               <Typography
@@ -400,35 +411,36 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
                     : `${formatPrice(order?.totalAmount)}`
                 }
               />
-              {order?.orderTypeId === 1 && (
-                <>
+              <>
+                <InfoItem
+                  label="Phương thức thanh toán"
+                  value={renderPaymentMethod()}
+                  isComponent
+                />
+                {order.transaction?.transactionTypeId === 4 ? (
                   <InfoItem
-                    label="Phương thức thanh toán"
-                    value={renderPaymentMethod()}
-                    isComponent
+                    label={"Đã hoàn lại tiền vào lúc"}
+                    value={moment(order?.transaction?.paidDate).format(
+                      "DD/MM/YYYY HH:mm"
+                    )}
                   />
-                  {order.transaction?.transactionTypeId == 4 ? (
-                    <InfoItem
-                      label={"Đã hoàn lại tiền vào lúc"}
-                      value={moment(order?.transaction?.paidDate).format(
-                        "DD/MM/YYYY HH:mm"
-                      )}
-                    />
-                  ) : (
-                    <InfoItem
-                      label={
-                        order?.orderTypeId === 1
-                          ? "Đã đặt cọc lúc"
-                          : "Đã thanh toán lúc"
-                      }
-                      value={
-                        order.orderTypeId === 1 &&
-                        moment(order?.depositDate).format("DD/MM/YYYY HH:mm")
-                      }
-                    />
-                  )}
-                </>
-              )}
+                ) : (
+                  <InfoItem
+                    label={
+                      order?.orderTypeId === 1
+                        ? "Đã đặt cọc lúc"
+                        : "Đã thanh toán lúc"
+                    }
+                    value={
+                      order.orderTypeId === 1
+                        ? moment(order?.depositDate).format("DD/MM/YYYY HH:mm")
+                        : moment(order?.transaction?.paidDate).format(
+                            "DD/MM/YYYY HH:mm"
+                          )
+                    }
+                  />
+                )}
+              </>
             </div>
           </div>
           <div>

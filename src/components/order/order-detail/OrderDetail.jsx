@@ -11,6 +11,7 @@ import { WarningOutlined } from "@ant-design/icons";
 import useCallApi from "../../../api/useCallApi";
 import { ConfigurationApi, OrderApi } from "../../../api/endpoint";
 import dayjs from "dayjs";
+import OrderTag from "../../tag/OrderTag";
 
 const OrderDetail = ({ reservationData, fetchData }) => {
   const { order, orderDishes, orderTables } = reservationData;
@@ -333,6 +334,16 @@ const OrderDetail = ({ reservationData, fetchData }) => {
               label="Tổng giá trị đơn hàng"
               value={formatPrice(order?.totalAmount)}
             />
+            <InfoItem
+              label="Trạng thái đơn"
+              value={<OrderTag orderStatusId={order?.statusId} />}
+            />
+            {order.shipper && (
+              <InfoItem
+                label="Shipper đảm nhận giao"
+                value={`${order.shipper.lastName} ${order.shipper.firstName} - 0${order.shipper.phoneNumber}`}
+              />
+            )}
           </div>
           <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
             <Typography
@@ -340,7 +351,7 @@ const OrderDetail = ({ reservationData, fetchData }) => {
               color="blue-gray"
               className="mb-4 font-semibold"
             >
-              Thông Tin Đặt Cọc
+              Thông Tin Giao Dịch
             </Typography>
             <InfoItem
               label={
@@ -354,14 +365,20 @@ const OrderDetail = ({ reservationData, fetchData }) => {
                   : `${formatPrice(order?.totalAmount)}`
               }
             />
-            {order?.orderTypeId === 1 && (
-              <>
+            <>
+              <InfoItem
+                label="Phương thức thanh toán"
+                value={renderPaymentMethod()}
+                isComponent
+              />
+              {order.transaction?.transactionTypeId == 4 ? (
                 <InfoItem
-                  label="Phương thức thanh toán"
-                  value={renderPaymentMethod()}
-                  isComponent
+                  label={"Đã hoàn lại tiền vào lúc"}
+                  value={moment(order?.transaction?.paidDate).format(
+                    "DD/MM/YYYY HH:mm"
+                  )}
                 />
-
+              ) : (
                 <InfoItem
                   label={
                     order?.orderTypeId === 1
@@ -369,12 +386,15 @@ const OrderDetail = ({ reservationData, fetchData }) => {
                       : "Đã thanh toán lúc"
                   }
                   value={
-                    order.orderTypeId === 1 &&
-                    moment(order?.depositDate).format("DD/MM/YYYY HH:mm")
+                    order.orderTypeId === 1
+                      ? moment(order?.depositDate).format("DD/MM/YYYY HH:mm")
+                      : moment(order?.transaction?.paidDate).format(
+                          "DD/MM/YYYY HH:mm"
+                        )
                   }
                 />
-              </>
-            )}
+              )}
+            </>
           </div>
         </div>
         <Typography
