@@ -93,7 +93,7 @@ export const configCalendar = {
   monthFormat: "MM-YYYY",
 };
 export function AdminMealHistoryPage() {
-  const [activeTab, setActiveTab] = useState("0");
+  const [activeTab, setActiveTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);

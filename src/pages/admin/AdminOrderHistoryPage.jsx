@@ -31,7 +31,7 @@ TABS.unshift({ value: 0, label: "Tất cả" });
 const { RangePicker } = DatePicker;
 
 export function AdminOrderHistoryPage() {
-  const [activeTab, setActiveTab] = useState("0");
+  const [activeTab, setActiveTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);

@@ -32,7 +32,7 @@ const TABS = OrderStatus.filter(
 );
 TABS.unshift({ value: 0, label: "Tất cả" });
 export function AdminReservationPage() {
-  const [activeTab, setActiveTab] = useState("0");
+  const [activeTab, setActiveTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [reservations, setReservations] = useState([]);
   const [tables, setTables] = useState([]);
