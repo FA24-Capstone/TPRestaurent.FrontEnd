@@ -114,8 +114,8 @@ const AdminDashboardPage = ({
   orderStatusData = mockData.orderStatusData,
 }) => {
   return (
-    <div className="grid grid-cols-12">
-      <div className="p-6 col-span-9 max-h-[900px] overflow-y-auto">
+    <div className="grid grid-cols-1 xl:grid-cols-12">
+      <div className="p-6 col-span-1 xl:col-span-9 max-h-[900px] overflow-y-auto">
         <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
           {stats.map(({ icon, title, value, footer }) => (
             <Card key={title}>
@@ -260,7 +260,7 @@ const AdminDashboardPage = ({
           </CardBody>
         </Card>
       </div>
-      <div className="col-span-3 p-4 max-h-[900px] overflow-y-auto bg-gray-50">
+      <div className="col-span-1 xl:col-span-3 p-4 max-h-[900px] overflow-y-auto bg-gray-50">
         <h3>Lịch đặt bàn </h3>
         <div className="my-2 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-4">
           {/* Header Section */}
