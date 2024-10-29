@@ -33,6 +33,7 @@ import { formatPrice, mergeCartData, showError } from "../../util/Utility";
 import Card_Logo from "../../assets/imgs/payment-icon/Cash_Logo.png";
 import MoMo_Logo from "../../assets/imgs/payment-icon/MoMo_Logo.png";
 import VNpay_Logo from "../../assets/imgs/payment-icon/VNpay_Logo.png";
+import Cash_Logo from "../../assets/imgs/payment-icon/Cash_Logo.png";
 import PaymentMethodSelector from "./PaymentMethodSelector";
 import { clearCart, getTotal } from "../../redux/features/cartReservationSlice";
 import useCallApi from "../../api/useCallApi";
@@ -116,7 +117,8 @@ const CartSummary = ({ handleClose }) => {
         return <img src={VNpay_Logo} alt="" className="w-10 h-10" />;
       case 3:
         return <img src={MoMo_Logo} alt="" className="w-10 h-10" />;
-
+      case 5:
+        return <img src={Cash_Logo} alt="" className="w-10 h-10" />;
       default:
         return null;
     }
