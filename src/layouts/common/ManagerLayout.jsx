@@ -17,10 +17,7 @@ const menuItems = [
   {
     title: "Tổng quan",
     icon: <FaChartBar className="h-5 w-5 text-white" />,
-    subItems: [
-      { title: "Bảng điều khiển", path: "/overview/dashboard" },
-      { title: "Báo cáo", path: "/overview/reports" },
-    ],
+    path: "/admin/overviews",
   },
   {
     title: "Quản lý món ăn",
