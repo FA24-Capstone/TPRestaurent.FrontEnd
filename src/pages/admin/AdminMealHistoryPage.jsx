@@ -237,12 +237,11 @@ export function AdminMealHistoryPage() {
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
-  if (loading) {
-    return <LoadingOverlay isLoading={true} />;
-  }
+
   return (
     <>
       <Card className="h-full w-full">
+        <LoadingOverlay loading={loading} />
         <CardHeader floated={false} shadow={false} className="rounded-none">
           <div className="mb-8 flex items-center justify-between gap-8">
             <div>

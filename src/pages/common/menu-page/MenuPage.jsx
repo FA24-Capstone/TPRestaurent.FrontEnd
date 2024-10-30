@@ -62,11 +62,10 @@ const MenuPage = () => {
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
-  if (loading) {
-    return <LoadingOverlay isLoading={loading} />;
-  }
+
   return (
     <div className="my-16">
+      <LoadingOverlay isLoading={loading} />
       <h1 className="uppercase font-bold text-center text-3xl mb-8">
         Khám phá thực đơn của chúng tôi
       </h1>

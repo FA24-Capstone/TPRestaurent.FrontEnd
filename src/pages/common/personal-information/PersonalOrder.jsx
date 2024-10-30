@@ -42,11 +42,9 @@ const PersonalOrder = () => {
     { value: 9, label: "Đã huỷ" },
   ];
 
-  if (loading) {
-    return <LoadingOverlay isLoading={loading} />;
-  }
   return (
     <div className="w-full max-w-3xl mx-auto">
+      <LoadingOverlay isLoading={loading} />
       <h1 className="uppercase text-red-700 font-bold text-2xl mb-6">
         Thông tin của tôi
       </h1>

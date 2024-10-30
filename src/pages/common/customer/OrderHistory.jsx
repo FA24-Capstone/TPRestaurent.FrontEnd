@@ -86,11 +86,10 @@ export function OrderHistory() {
     searchParams.set("phoneNumber", phone);
     navigate({ search: searchParams.toString() });
   };
-  if (loading) {
-    <LoadingOverlay isLoading={loading} />;
-  }
+
   return (
     <div className="container mx-auto p-4">
+      <LoadingOverlay isLoading={loading} />
       <Card className="w-full shadow-xl mb-4">
         <Title level={2} className="mb-4 text-center">
           Tra cứu thông tin đặt chỗ và đơn hàng

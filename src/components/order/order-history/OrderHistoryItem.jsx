@@ -28,9 +28,6 @@ const OrderHistoryItem = ({ order }) => {
     }
   }, [showDetails]);
 
-  if (loading) {
-    return <LoadingOverlay isLoading={loading} />;
-  }
   const renderOrderTime = () => {
     switch (order.orderTypeId) {
       case 1:
@@ -43,6 +40,7 @@ const OrderHistoryItem = ({ order }) => {
   };
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-4">
+      <LoadingOverlay loading={loading} />
       <div>
         <div className="flex flex-col md:flex-row justify-between items-center mb-4">
           <div className="flex items-center mb-2 md:mb-0">

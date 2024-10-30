@@ -49,9 +49,7 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
       showError(error);
     }
   };
-  if (loading) {
-    return <LoadingOverlay isLoading={loading} />;
-  }
+
   const renderPaymentMethod = () => {
     switch (order?.transaction?.paymentMethodId) {
       case PaymentMethod.MOMO:
@@ -303,6 +301,7 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
   };
   return (
     <Card className="w-full shadow-none border-none">
+      <LoadingOverlay loading={loading} />
       <CardBody className="p-6">
         <Typography
           variant="h4"

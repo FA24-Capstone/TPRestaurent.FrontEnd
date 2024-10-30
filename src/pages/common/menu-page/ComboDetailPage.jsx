@@ -25,11 +25,10 @@ export function ComboDetailPage() {
   const handleBack = () => {
     navigate(-1);
   };
-  if (loading) {
-    return <LoadingOverlay isLoading={loading} />;
-  }
+
   return (
     <div>
+      <LoadingOverlay loading={loading} />
       <ComboDetail
         comboData={comboData}
         key={`combodetail`}

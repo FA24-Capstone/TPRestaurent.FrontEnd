@@ -210,9 +210,6 @@ const CartSummary = ({ handleClose }) => {
 
     return totalBefore;
   };
-  if (loading) {
-    return <LoadingOverlay isLoading={loading} />;
-  }
   const handleCoupons = async () => {
     debugger;
     setIsModalCouponVisible(true);
@@ -235,6 +232,7 @@ const CartSummary = ({ handleClose }) => {
 
   return (
     <div className="container my-4 p-6 bg-white">
+      <LoadingOverlay loading={loading} />
       <Title level={3} className="uppercase text-center mb-6">
         Xác nhận đơn hàng
       </Title>

@@ -149,11 +149,10 @@ const AdminDashboardPage = ({
   useEffect(() => {
     fetchReservations();
   }, []);
-  if (loading) {
-    return <LoadingOverlay isLoading={loading} />;
-  }
+
   return (
     <div className="grid grid-cols-1 xl:grid-cols-12">
+      <LoadingOverlay loading={loading} />
       <div className="p-6 col-span-1 xl:col-span-9 max-h-[900px] overflow-y-auto">
         <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
           {stats.map(({ icon, title, value, footer }) => (

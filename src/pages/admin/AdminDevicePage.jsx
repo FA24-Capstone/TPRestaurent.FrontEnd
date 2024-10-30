@@ -13,6 +13,7 @@ import { FaLock } from "react-icons/fa";
 import { MdEditNote } from "react-icons/md";
 import useCallApi from "../../api/useCallApi";
 import Pagination from "../../components/pagination/Pagination";
+import LoadingOverlay from "../../components/loading/LoadingOverlay";
 
 export function AdminDevicePage() {
   const [devices, setDevices] = useState([]);
@@ -88,12 +89,10 @@ export function AdminDevicePage() {
       ),
     },
   ];
-  if (loading) {
-    return <Skeleton />;
-  }
+
   return (
     <Card className="h-full w-full">
-      {/* <LoadingOverlay /> */}
+      <LoadingOverlay isLoading={loading} />
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-8 flex items-center justify-between gap-8">
           <div>
