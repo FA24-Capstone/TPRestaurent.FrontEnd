@@ -20,7 +20,7 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
   const { order, orderDishes, orderTables } = reservationData;
   const { callApi, error, loading } = useCallApi();
   const [amount, setAmount] = useState("");
-  const totalAmount = order.totalAmount;
+  const totalAmount = order?.totalAmount;
 
   const handlePayment = async () => {
     if (!amount) {
@@ -383,7 +383,7 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
                 label="Trạng thái đơn"
                 value={<OrderTag orderStatusId={order?.statusId} />}
               />
-              {order.shipper && (
+              {order?.shipper && (
                 <InfoItem
                   label="Shipper đảm nhận giao"
                   value={`${order.shipper.lastName} ${order.shipper.firstName} - 0${order.shipper.phoneNumber}`}
@@ -416,7 +416,7 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
                   value={renderPaymentMethod()}
                   isComponent
                 />
-                {order.transaction?.transactionTypeId === 4 ? (
+                {order?.transaction?.transactionTypeId === 4 ? (
                   <InfoItem
                     label={"Đã hoàn lại tiền vào lúc"}
                     value={moment(order?.transaction?.paidDate).format(
@@ -431,7 +431,7 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
                         : "Đã thanh toán lúc"
                     }
                     value={
-                      order.orderTypeId === 1
+                      order?.orderTypeId === 1
                         ? moment(order?.depositDate).format("DD/MM/YYYY HH:mm")
                         : moment(order?.transaction?.paidDate).format(
                             "DD/MM/YYYY HH:mm"
