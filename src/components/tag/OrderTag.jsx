@@ -37,7 +37,7 @@ const OrderStatus = [
     label: "Đã đặt trước",
     value: 4,
     color: "purple",
-    text: "Đặt trước",
+    text: "Chờ xử lý",
     icon: <ClockCircleOutlined />,
   },
   {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Card, CardBody, Typography } from "@material-tailwind/react";
-import { Button, Input, message, Modal, Table } from "antd";
+import { Button, Input, message, Modal, Radio, Table } from "antd";
 import moment from "moment/moment";
 import Momo_logo from "../../../assets/imgs/payment-icon/MoMo_Logo.png";
 import VNPAY_logo from "../../../assets/imgs/payment-icon/VNpay_Logo.png";
@@ -8,19 +8,24 @@ import Cash_Logo from "../../../assets/imgs/payment-icon/Cash_Logo.png";
 import { PaymentMethod } from "../../../util/GlobalType";
 import { formatDateTime, formatPrice, showError } from "../../../util/Utility";
 import { StyledTable } from "../../custom-ui/StyledTable";
-import { WarningOutlined } from "@ant-design/icons";
+import {
+  DollarOutlined,
+  WalletOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
 import useCallApi from "../../../api/useCallApi";
 import { ConfigurationApi, OrderApi } from "../../../api/endpoint";
 import dayjs from "dayjs";
-import { DollarSign } from "lucide-react";
+import { DollarSign, HandCoins, UndoDot } from "lucide-react";
 import LoadingOverlay from "../../loading/LoadingOverlay";
 import OrderTag from "../../tag/OrderTag";
 
-const OrderDetailAdmin = ({ reservationData, fetchData }) => {
+const OrderDetailAdmin = ({ reservationData, fetchData, onClose }) => {
   const { order, orderDishes, orderTables } = reservationData;
   const { callApi, error, loading } = useCallApi();
   const [amount, setAmount] = useState("");
   const totalAmount = order?.totalAmount;
+  const [refundType, setRefundType] = useState("cash"); // 'cash' or 'wallet'
 
   const handlePayment = async () => {
     if (!amount) {
@@ -41,10 +46,12 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
         loyalPointsToUse: 0,
         cashReceived: amount,
         changeReturned: amount - totalAmount,
+        chooseCashRefund: refundType === "cash" ? true : false,
       }
     );
     if (response?.isSuccess) {
       message.success("Thanh toán thành công");
+      onClose();
     } else {
       showError(error);
     }
@@ -189,11 +196,7 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
           return false;
         }
       case 2:
-        if (order?.statusId == 4) {
-          return true;
-        } else {
-          return false;
-        }
+        return false;
       case 3:
         if (order?.statusId == 3 || order?.statusId == 5) {
           return true;
@@ -457,31 +460,83 @@ const OrderDetailAdmin = ({ reservationData, fetchData }) => {
               className="border border-gray-200 rounded-lg overflow-hidden"
             />
             {renderIsPayment() && (
-              <Card className="max-w-md mx-auto">
-                <div className="flex flex-col space-y-4">
-                  <Input
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    type="number"
-                    placeholder="Tiền khách đưa"
-                    label="Tiền khách đưa"
-                    prefix={<DollarSign className="mr-2" size={16} />}
-                  />
+              <Card className="max-w-md mx-auto p-6 bg-white shadow-lg">
+                <div className="flex flex-col space-y-6">
+                  {/* Amount Input Section */}
+                  <div className="relative">
+                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                      <HandCoins size={16} className="text-gray-500" />
+                      Tiền khách đưa
+                    </label>
+                    <div className="relative">
+                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                        <DollarSign className="text-gray-500" size={16} />
+                      </div>
+                      <Input
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        type="number"
+                        placeholder="Nhập số tiền"
+                        className="pl-10 h-12 w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
 
-                  {amount - totalAmount !== 0 && (
-                    <Typography
-                      type={amount - totalAmount >= 0 ? "success" : "danger"}
-                    >
-                      {amount - totalAmount >= 0
-                        ? `Tiền thối lại: ${formatPrice(amount - totalAmount)}`
-                        : "Tiền khách trả không đủ"}
-                    </Typography>
+                  {/* Change Amount Section */}
+                  {amount - totalAmount && (
+                    <div className="flex items-center gap-2 p-4 rounded-lg bg-gray-50">
+                      <UndoDot
+                        className={
+                          amount - totalAmount >= 0
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }
+                        size={20}
+                      />
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">Trả lại:</span>
+                        <span
+                          className={`font-bold ${
+                            amount - totalAmount >= 0
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}
+                        >
+                          {formatPrice(amount - totalAmount)}
+                        </span>
+                      </div>
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <Typography className="block mb-3">
+                          Hình thức hoàn tiền
+                        </Typography>
+                        <Radio.Group
+                          value={refundType}
+                          onChange={(e) => setRefundType(e.target.value)}
+                          className="flex flex-col space-y-3"
+                        >
+                          <Radio value="cash">
+                            <div className="flex items-center gap-2">
+                              <DollarOutlined />
+                              <span>Hoàn tiền mặt</span>
+                            </div>
+                          </Radio>
+                          <Radio value="wallet">
+                            <div className="flex items-center gap-2">
+                              <WalletOutlined />
+                              <span>Hoàn vào ví</span>
+                            </div>
+                          </Radio>
+                        </Radio.Group>
+                      </div>
+                    </div>
                   )}
+
+                  {/* Payment Button */}
                   <Button
-                    type="primary"
-                    className="bg-red-900 hover:bg-red-800"
                     onClick={handlePayment}
+                    className="w-full h-12 bg-red-800 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
                   >
+                    <DollarSign size={18} />
                     Thanh toán bằng tiền mặt
                   </Button>
                 </div>
