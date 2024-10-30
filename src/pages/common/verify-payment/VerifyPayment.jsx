@@ -29,6 +29,16 @@ const VerifyPayment = () => {
     const resultCode = searchParams.get("resultCode");
     const orderInfo = searchParams.get("vnp_OrderInfo");
     const id = searchParams.get("vnp_TxnRef");
+    const getOS = () => {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      if (/android/i.test(userAgent)) {
+        return "Android";
+      }
+      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        return "iOS";
+      }
+      return "unknown";
+    };
 
     setTotalAmount(
       searchParams.get("vnp_Amount") || searchParams.get("amount") * 100
@@ -84,6 +94,9 @@ const VerifyPayment = () => {
           );
         }
       }
+    }
+    if (getOS() === "Android") {
+      window.location.href = `thienphurestaurant://transaction?isSuccess=${isSuccess}`;
     }
     setModalIsOpen(true);
   };
