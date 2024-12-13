@@ -4,6 +4,7 @@ import OtpConfirmModal from "./OtpConfirmModal";
 import loginImage from "../../assets/imgs/login.png";
 import useCallApi from "../../api/useCallApi";
 import { useLocation } from "react-router-dom";
+import { showError } from "../../util/Utility";
 
 const LoginPage = () => {
   const [phone, setPhone] = useState("");
@@ -23,6 +24,8 @@ const LoginPage = () => {
       setResOtp(data?.result);
       setIsOtpModalVisible(true);
       setCountdown(60);
+    } else {
+      showError(data?.messages);
     }
   };
   useEffect(() => {
